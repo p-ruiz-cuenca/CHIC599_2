@@ -3,6 +3,8 @@
 library(dplyr)
 library(ggplot2)
 library(sf)
+library(raster)
+library(tmap)
 
 # Load data ----
 
@@ -14,6 +16,101 @@ str(sth)
 sth_1 <- sth %>% 
   filter(Georeliability %in% c(1,2,3))
 
+# set as sf data 
+
+sth_sf <- st_as_sf(sth_1, coords = c("Longitude", "Latitude"))
+st_crs(sth_sf) <- 4326
+
+sth_sf <- st_transform(sth_sf, crs = 32638)
+
 ## ADM data ----
 
 ETH_adm0 <- st_read("ETH_files/ETH_adm/ETH_adm0.shp")
+ETH_adm0 <- st_transform(ETH_adm0, crs = 32638)
+
+ETH_adm1 <- st_read("ETH_files/ETH_adm/ETH_adm1.shp")
+ETH_adm1 <- st_transform(ETH_adm1, crs = 32638)
+
+ETH_adm2 <- st_read("ETH_files/ETH_adm/ETH_adm2.shp")
+ETH_adm2 <- st_transform(ETH_adm2, crs = 32638)
+
+# plot boundaries with site level points 
+
+ggplot()+
+  geom_sf(data = ETH_adm1, fill = NA, col = "grey")+
+  geom_sf(data = ETH_adm0, fill = NA, col = "black")+
+  geom_sf(data = sth_sf, col = "red", size = 0.5)+
+  coord_sf()+
+  theme_void()
+
+## raster data ----
+
+# Altitude
+ETH_alt <- raster("ETH_files/ETH_msk_alt/ETH_msk_alt.gri")
+ETH_alt <- projectRaster(ETH_alt, crs = 32638)
+ETH_alt.df <- as.data.frame(ETH_alt, xy = TRUE)
+names(ETH_alt.df)[3] <- "Altitude"
+ETH_alt.df <- ETH_alt.df[complete.cases(ETH_alt.df),]
+
+# Land cover (from 2000, so not very useful)
+#ETH_cov <- raster("ETH_files/ETH_msk_cov/ETH_msk_cov.gri")
+#ETH_cov <- projectRaster(ETH_cov, crs = 32638)
+#ETH_cov.df <- as.data.frame(ETH_cov, xy=TRUE)
+#ETH_cov.df <- ETH_cov.df[complete.cases(ETH_cov.df),]
+#names(ETH_cov.df)[3] <- "Land_cover"
+
+# friction
+ETH_fric_w <- raster("ETH_files/2020_walking_only_friction_surface_ETH.tif")
+ETH_fric_w <- projectRaster(ETH_fric_w, crs = 32638)
+ETH_fric_w.df <- as.data.frame(ETH_fric_w, xy=TRUE)
+ETH_fric_w.df <- ETH_fric_w.df[complete.cases(ETH_fric_w.df),]
+names(ETH_fric_w.df)[3] <- "Friction_surface"
+
+ETH_fric_m <- raster("ETH_files/2020_motorized_friction_surface_ETH.tif")
+ETH_fric_m <- projectRaster(ETH_fric_m, crs = 32638)
+ETH_fric_m.df <- as.data.frame(ETH_fric_m, xy=TRUE)
+ETH_fric_m.df <- ETH_fric_m.df[complete.cases(ETH_fric_m.df),]
+names(ETH_fric_m.df)[3] <- "Friction_surface"
+
+# travel to health center 
+ETH_travel_w <- raster("ETH_files/2020_walking_only_travel_time_to_healthcare_ETH.tif")
+ETH_travel_w <- projectRaster(ETH_travel_w, crs = 32638)
+ETH_travel_w.df <- as.data.frame(ETH_travel_w, xy=TRUE)
+ETH_travel_w.df <- ETH_travel_w.df[complete.cases(ETH_travel_w.df),]
+names(ETH_travel_w.df)[3] <- "Travel_time"
+
+ETH_travel_m <- raster("ETH_files/2020_motorized_travel_time_to_healthcare_ETH.tif")
+ETH_travel_m <- projectRaster(ETH_travel_m, crs = 32638)
+ETH_travel_m.df <- as.data.frame(ETH_travel_m, xy=TRUE)
+ETH_travel_m.df <- ETH_travel_m.df[complete.cases(ETH_travel_m.df),]
+names(ETH_travel_m.df)[3] <- "Travel_time"
+
+### plot rasters ----
+
+ggplot()+
+  geom_raster(data = ETH_fric_m.df, aes(x = x, y = y, fill = Friction_surface))+
+  geom_sf(data = ETH_adm1, fill = NA, col = "grey")+
+  geom_sf(data = ETH_adm0, fill = NA, col = "black")+
+  #scale_fill_gradient(low = )+
+  theme_void()
+
+tm_shape(ETH_alt)+
+  tm_raster(title = "Altitude")+
+  tm_shape(ETH_adm1)+
+  tm_borders(col = "grey")+
+  tm_shape(ETH_adm0)+
+  tm_borders(col= "black")
+
+tm_shape(ETH_cov)+
+  tm_raster(title = "Land Cover")+
+  tm_shape(ETH_adm1)+
+  tm_borders(col = "grey")+
+  tm_shape(ETH_adm0)+
+  tm_borders(col= "black")
+
+tm_shape(ETH_travel_w)+
+  tm_raster(title = "Travel to healthcare - walking")+
+  tm_shape(ETH_adm1)+
+  tm_borders(col = "grey")+
+  tm_shape(ETH_adm0)+
+  tm_borders(col= "black")

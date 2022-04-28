@@ -1,0 +1,26 @@
+---
+title: "Research Project 2 - STH in Ethiopia"
+output: github_document
+
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(raster)
+library(tmap)
+
+```
+
+# Data sources 
+
+- STH data: [ESPEN](https://espen.afro.who.int/tools-resources/download-data)
+- Altitude and landcover: [DIVA GIS](https://www.diva-gis.org/)
+- Friction surface and travel times: [Malaria Atlas Project](https://malariaatlas.org/)
+  - Friction surface recorded as minutes required to travel one meter, walking only and with motorized vehicle
+  - Travel time to nearest healthcare centre, in minutes 
+
