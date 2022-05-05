@@ -133,3 +133,5 @@ sth_1 <- sth_1 %>%
          altitude, fric_w, fric_m, travel_w, travel_m)
 
 write.csv(sth_1, file = "data/ETH_sth.csv", row.names = FALSE)
+
+
