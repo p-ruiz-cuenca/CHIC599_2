@@ -8,7 +8,7 @@ library(tmap)
 
 # Load data ----
 
-## STH data ----
+##├ STH data ----
 sth <- read.csv("raw_data/data-ET-STH-sitelevel.csv")
 
 str(sth)
@@ -23,7 +23,7 @@ st_crs(sth_sf) <- 4326
 
 sth_sf <- st_transform(sth_sf, crs = 32638)
 
-## ADM data ----
+##├ ADM data ----
 
 ETH_adm0 <- st_read("ETH_files/ETH_adm/ETH_adm0.shp")
 ETH_adm0 <- st_transform(ETH_adm0, crs = 32638)
@@ -43,7 +43,7 @@ ggplot()+
   coord_sf()+
   theme_void()
 
-## raster data ----
+## ├ raster data ----
 
 # Altitude
 ETH_alt <- raster("ETH_files/ETH_msk_alt/ETH_msk_alt.gri")
@@ -114,3 +114,22 @@ tm_shape(ETH_travel_w)+
   tm_borders(col = "grey")+
   tm_shape(ETH_adm0)+
   tm_borders(col= "black")
+
+# Extract raster data to STH points ----
+
+sth_1$altitude <- terra::extract(ETH_alt, sth_sf)
+
+sth_1$fric_w <- terra::extract(ETH_fric_w, sth_sf)
+sth_1$fric_m <- terra::extract(ETH_fric_m, sth_sf)
+
+sth_1$travel_w <- terra::extract(ETH_travel_w, sth_sf)
+sth_1$travel_m <- terra::extract(ETH_travel_m, sth_sf)
+
+sth_1 <- sth_1 %>% 
+  dplyr::select(ADMIN1_NAME, ADMIN1_CODE, ADMIN2_NAME, ADMIN2_CODE,
+         IU_NAME, IU_ID, Location, Longitude, Latitude, Georeliability,
+         Year, HK_examined, HK_positive, Asc_examined, Asc_positive,
+         TT_examined, TT_positive, 
+         altitude, fric_w, fric_m, travel_w, travel_m)
+
+write.csv(sth_1, file = "data/ETH_sth.csv", row.names = FALSE)
