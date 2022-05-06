@@ -43,6 +43,26 @@ ggplot()+
   coord_sf()+
   theme_void()
 
+## ├ waterways shapefile ----
+
+ETH_riv <- st_read("ETH_files/ETH_wat/ETH_water_lines_dcw.shp")
+ETH_riv <- st_transform(ETH_riv, crs = 32638)
+
+# ETH_lakes <- st_read("ETH_files/ETH_wat/ETH_water_areas_dcw.shp")
+# ETH_lakes <- st_transform(ETH_lakes, crs = 32638)
+
+ggplot()+
+  geom_sf(data = ETH_adm1, fill = NA, col = "grey")+
+  geom_sf(data = ETH_adm0, fill = NA, col = "black")+
+  geom_sf(data = ETH_riv, col = "blue")+
+  geom_sf(data = sth_sf, col = "red", size = 0.5)+
+  coord_sf()+
+  theme_void()
+
+# calculate minimum distance to river in km 
+
+sth_1$riv_dist <- apply(st_distance(sth_sf, ETH_riv), 1, min)/1000
+
 ## ├ raster data ----
 
 # Altitude
@@ -130,7 +150,7 @@ sth_1 <- sth_1 %>%
          IU_NAME, IU_ID, Location, Longitude, Latitude, Georeliability,
          Year, HK_examined, HK_positive, Asc_examined, Asc_positive,
          TT_examined, TT_positive, 
-         altitude, fric_w, fric_m, travel_w, travel_m)
+         altitude, riv_dist, fric_w, fric_m, travel_w, travel_m)
 
 write.csv(sth_1, file = "data/ETH_sth.csv", row.names = FALSE)
 
