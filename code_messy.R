@@ -14,7 +14,8 @@ sth <- read.csv("raw_data/data-ET-STH-sitelevel.csv")
 str(sth)
 
 sth_1 <- sth %>% 
-  filter(Georeliability %in% c(1,2,3))
+  filter(Georeliability %in% c(1,2,3)&
+           Quality %in% c(1,2))
 
 # set as sf data 
 
@@ -39,7 +40,7 @@ ETH_adm2 <- st_transform(ETH_adm2, crs = 32638)
 ggplot()+
   geom_sf(data = ETH_adm1, fill = NA, col = "grey")+
   geom_sf(data = ETH_adm0, fill = NA, col = "black")+
-  geom_sf(data = sth_sf, col = "red", size = 0.5)+
+  geom_sf(data = sth_sf, size = 0.5, aes(col = as.factor(Year)))+
   coord_sf()+
   theme_void()
 
@@ -121,12 +122,12 @@ tm_shape(ETH_alt)+
   tm_shape(ETH_adm0)+
   tm_borders(col= "black")
 
-tm_shape(ETH_cov)+
-  tm_raster(title = "Land Cover")+
-  tm_shape(ETH_adm1)+
-  tm_borders(col = "grey")+
-  tm_shape(ETH_adm0)+
-  tm_borders(col= "black")
+#tm_shape(ETH_cov)+
+#  tm_raster(title = "Land Cover")+
+#  tm_shape(ETH_adm1)+
+#  tm_borders(col = "grey")+
+#  tm_shape(ETH_adm0)+
+#  tm_borders(col= "black")
 
 tm_shape(ETH_travel_w)+
   tm_raster(title = "Travel to healthcare - walking")+
@@ -152,6 +153,20 @@ sth_1 <- sth_1 %>%
          TT_examined, TT_positive, 
          altitude, riv_dist, fric_w, fric_m, travel_w, travel_m)
 
+
+
 write.csv(sth_1, file = "data/ETH_sth.csv", row.names = FALSE)
 
 
+# messy ----
+
+sth_1 %>% 
+  count(Year)
+
+sth_1 %>% 
+  filter(Year != 0 & Year != "null") %>% 
+  count(Year)
+
+sth %>% 
+  count(Quality, Year)
+# Quality: 1 = good quality, 2 = middle quality, 3 = poor quality
