@@ -173,7 +173,14 @@ ETH_grid$fric_m <- terra::extract(ETH_fric_m, ETH_grid[,1:2])
 ETH_grid$travel_w <- terra::extract(ETH_travel_w, ETH_grid[,1:2])
 ETH_grid$travel_m <- terra::extract(ETH_travel_m, ETH_grid[,1:2])
 
-ETH_grid$riv_dist <- apply(st_distance(ETH_grid.sf, ETH_riv), 1, min)/1000
+ETH_grid <- ETH_grid[complete.cases(ETH_grid),]
+
+ETH_grid.2 <- st_as_sf(ETH_grid, coords = c("X", "Y"))
+st_crs(ETH_grid.2) <- 32638
+
+ETH_grid$riv_dist <- apply(st_distance(ETH_grid.2, ETH_riv), 1, min)/1000
+
+write.csv(ETH_grid, file = "data/ETH_grid.csv", row.names = FALSE)
 
 # messy ----
 
