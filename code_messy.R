@@ -157,6 +157,23 @@ sth_1 <- sth_1 %>%
 
 write.csv(sth_1, file = "data/ETH_sth.csv", row.names = FALSE)
 
+# ETH grid for prediction ----
+
+ETH_grid.sf <- st_make_grid(ETH_adm0,
+                            cellsize = 5000,
+                            what = "centers")
+
+ETH_grid <- as.data.frame(st_coordinates(ETH_grid.sf))
+
+ETH_grid$altitude <- terra::extract(ETH_alt, ETH_grid[,1:2])
+
+ETH_grid$fric_w <- terra::extract(ETH_fric_w, ETH_grid[,1:2])
+ETH_grid$fric_m <- terra::extract(ETH_fric_m, ETH_grid[,1:2])
+
+ETH_grid$travel_w <- terra::extract(ETH_travel_w, ETH_grid[,1:2])
+ETH_grid$travel_m <- terra::extract(ETH_travel_m, ETH_grid[,1:2])
+
+ETH_grid$riv_dist <- apply(st_distance(ETH_grid.sf, ETH_riv), 1, min)/1000
 
 # messy ----
 
