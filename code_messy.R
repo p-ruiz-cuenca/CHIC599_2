@@ -24,6 +24,9 @@ st_crs(sth_sf) <- 4326
 
 sth_sf <- st_transform(sth_sf, crs = 32638)
 
+sth$utm_x <- as.data.frame(st_coordinates(sth_sf))$X
+sth$utm_y <- as.data.frame(st_coordinates(sth_sf))$Y
+
 ##├ ADM data ----
 
 ETH_adm0 <- st_read("ETH_files/ETH_adm/ETH_adm0.shp")
