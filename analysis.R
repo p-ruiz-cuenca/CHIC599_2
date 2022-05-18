@@ -190,7 +190,7 @@ plot(HK.pred.prev, type = "prevalence", summary = "predictions")
   # didn't include 'standard.errors=TRUE' in spatial.pred.binomial.MCML()
 
 # extract samples and back transform from logit to prevalence 
-HK.prev.samples <- 1/(1+exp(-HK.pred.prev$samples))
+HK.pred.samples <- 1/(1+exp(-HK.pred.prev$samples))
 
 # mean predicted prevalence
 HK.prev.mean <- apply(HK.prev.samples, 1, mean)
@@ -337,6 +337,22 @@ any.sth.r <- rasterFromXYZ(cbind(ETH_grid[,1:2],
 
 plot(any.sth.r)
 
+# calculate samples for AT LEAST ONE STH prevalence 
+any.sth.samples <- 1-((1-HK.pred.samples)*(1-Asc.pred.samples)*(1-TT.pred.samples))
+
+# probability of exceeding 50% prevalence 
+any.sth.ex.50 <- apply(any.sth.samples, 1, function(x) mean(x>0.5))
+ETH_grid$any.sth.exceed50 <- any.sth.ex.50
+
+# probability of exceeding 20% prevalence 
+any.sth.exceed20 <- apply(any.sth.samples, 1, function(x) mean(x>0.2))
+ETH_grid$any.sth.exceed20 <- any.sth.exceed20
+
+# probability of being between 20% and 50% prevalence 
+any.sth.between.20_50 <- apply(any.sth.samples, 1, function(x) mean(x>0.2 & x<0.5))
+ETH_grid$any.sth.between.20_50 <- any.sth.between.20_50
+
+
 # Store predictions in ETH_grid and save ----
 
 write.csv(ETH_grid, file = "data/ETH_grid.csv", row.names = FALSE)
@@ -344,8 +360,10 @@ write.csv(ETH_grid, file = "data/ETH_grid.csv", row.names = FALSE)
 # ggplots ----
 
 ggplot()+
-  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.prev.mean))+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.between.20_50))+
   geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
   geom_sf(data=ETH_adm0, col = "black", fill = NA)+
   scale_fill_scico(palette = "batlow")+
   theme_void()
+
+
