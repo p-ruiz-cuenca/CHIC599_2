@@ -161,6 +161,8 @@ HK.tau2.guess <- 0.718507
 
 par0.HK <- c(HK.beta.guess, HK.sigma2.guess, HK.phi.guess, HK.tau2.guess)
 
+# Fit geostat model 
+
 geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
                                            altitude + riv_dist + fric_w,
                                          units.m = ~ HK_examined,
@@ -173,10 +175,25 @@ geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
                                                             HK.tau2.guess/HK.sigma2.guess),
                                          method = "nlminb")
 
+# Create predicted prevalence raster 
 HK.pred.prev <- spatial.pred.binomial.MCML(geostat.fit.HK,
-                                           grid.pred = ETH_grid,
+                                           grid.pred = ETH_grid[,1:2],
                                            predictors = ETH_grid[,3:8],
                                            control.mcmc = mcml,
                                            scale.predictions = c("logit", 
                                                                  "prevalence"))
+
 plot(HK.pred.prev, "prevalence", "predictions")
+plot(HK.pred.prev, type = "prevalence", summary = "predictions")
+# plot(HK.pred.prev, type = "logit", summary = "standard.errors")
+  # didn't include 'standard.errors=TRUE' in spatial.pred.binomial.MCML()
+
+# extract samples and back transform from logit to prevalence 
+HK.prev.samples <- 1/(1+exp(-HK.pred.prev$samples))
+
+HK.prev.mean <- apply(HK.prev.samples, 1, mean)
+
+HK.antiprev.mean <- apply(HK.prev.samples, 1, function(x) mean(1-x))
+all(HK.antiprev.mean==(1-HK.prev.mean))
+
+
