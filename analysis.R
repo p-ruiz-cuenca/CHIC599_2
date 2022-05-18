@@ -8,10 +8,12 @@ library(tmap)
 library(lme4)
 library(PrevMap)
 
-# load clean sth data 
+# load clean sth and grid data 
 
 sth <- read.csv("data/ETH_sth.csv")
 sth$Asc_examined <- as.numeric(sth$Asc_examined)
+
+ETH_grid <- read.csv("data/ETH_grid.csv")
 
 # Plot variables against outcome ----
 
@@ -58,7 +60,7 @@ sth$ID.location <- create.ID.coords(sth, coords = ~utm_x+utm_y)
 
 glmer.fit.HK <- glmer(cbind(HK_positive, HK_examined-HK_positive) ~ 
                         altitude + riv_dist + 
-                        fric_w + I((fric_w-0.0175)*(fric_w>0.0175))+
+                        fric_w +
                         (1|ID.location),
                       data = sth,
                       family = binomial)
@@ -87,4 +89,94 @@ glmer.fit.TT <- glmer(cbind(TT_positive, TT_examined-TT_positive) ~
 
 summary(glmer.fit.TT)
 
+# Check residual spatial correlation ----
 
+range(dist(sth[,c("utm_x", "utm_y")]))
+
+spat.corr.diagnostic(formula = HK_positive ~ 
+                       altitude + riv_dist + fric_w, 
+                     units.m = ~HK_examined,
+                     coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                     data = sth, 
+                     likelihood = "Binomial",
+                     uvec = seq(0, 600, length = 15), 
+                     n.sim = 10000,
+                     which.test = "variogram")
+
+spat.corr.diagnostic(formula = Asc_positive ~ 
+                       altitude + riv_dist + travel_w, 
+                     units.m = ~Asc_examined,
+                     coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                     data = sth[complete.cases(sth),], 
+                     likelihood = "Binomial",
+                     uvec = seq(0, 600, length = 15), 
+                     n.sim = 10000,
+                     which.test = "variogram")
+
+spat.corr.diagnostic(formula = TT_positive ~ 
+                       altitude + riv_dist + travel_w, 
+                     units.m = ~TT_examined,
+                     coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                     data = sth[complete.cases(sth),], 
+                     likelihood = "Binomial",
+                     uvec = seq(0, 600, length = 15), 
+                     n.sim = 10000,
+                     which.test = "variogram")
+
+  # all 3 variograms show evidence of residual spatial correlation 
+
+# Fit geostatistical model ----
+
+mcml <- control.mcmc.MCML(n.sim=10000, # number of simulations
+                          burnin=2000, # the amount of samples to throw away
+                          # the first simulations are not representative
+                          # so these are thrown away
+                          # 2000 is the minimum to throw away
+                          thin=8) # Only retain every nth sample
+
+sth <- sth[complete.cases(sth),]
+
+## HK ----
+# get beta guesses
+HK.beta.guess <- coef(glm(cbind(HK_positive, HK_examined-HK_positive) ~
+                            altitude + riv_dist + fric_w,
+                          data = sth, family = binomial))
+
+# get other params guesses
+
+spat.corr.diagnostic(formula = HK_positive ~ 
+                       altitude + riv_dist + fric_w, 
+                     units.m = ~HK_examined,
+                     coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                     data = sth, 
+                     likelihood = "Binomial",
+                     uvec = seq(0, 600, length = 15), 
+                     n.sim = 10000,
+                     which.test = "variogram",
+                     lse.variogram = TRUE)
+
+HK.sigma2.guess <- 2.481438
+HK.phi.guess <- 43.527821
+HK.tau2.guess <- 0.718507
+
+par0.HK <- c(HK.beta.guess, HK.sigma2.guess, HK.phi.guess, HK.tau2.guess)
+
+geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
+                                           altitude + riv_dist + fric_w,
+                                         units.m = ~ HK_examined,
+                                         coords = ~utm_x+utm_y,
+                                         data = sth,
+                                         par0 = par0.HK,
+                                         control.mcmc = mcml,
+                                         kappa = 0.5,
+                                         start.cov.pars = c(HK.phi.guess,
+                                                            HK.tau2.guess/HK.sigma2.guess),
+                                         method = "nlminb")
+
+HK.pred.prev <- spatial.pred.binomial.MCML(geostat.fit.HK,
+                                           grid.pred = ETH_grid,
+                                           predictors = ETH_grid[,3:8],
+                                           control.mcmc = mcml,
+                                           scale.predictions = c("logit", 
+                                                                 "prevalence"))
+plot(HK.pred.prev, "prevalence", "predictions")
