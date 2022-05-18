@@ -360,10 +360,10 @@ write.csv(ETH_grid, file = "data/ETH_grid.csv", row.names = FALSE)
 # ggplots ----
 
 ggplot()+
-  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.between.20_50))+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.exceed50))+
   geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
   geom_sf(data=ETH_adm0, col = "black", fill = NA)+
-  scale_fill_scico(palette = "batlow")+
+  scale_fill_scico(palette = "vik")+
   theme_void()
 
 
