@@ -329,6 +329,7 @@ ETH_grid$TT.antiprev.mean <- TT.antiprev.mean
 
 # Raster of "AT LEAST ONE SPECIES" ----
 
+# take the samples directly into this equation, not the mean
 any.sth.prev.mean <- 1-(HK.antiprev.mean*Asc.antiprev.mean*TT.antiprev.mean)
 ETH_grid$any.sth.prev.mean <- any.sth.prev.mean
 
@@ -348,6 +349,10 @@ ETH_grid$any.sth.exceed50 <- any.sth.ex.50
 any.sth.exceed20 <- apply(any.sth.samples, 1, function(x) mean(x>0.2))
 ETH_grid$any.sth.exceed20 <- any.sth.exceed20
 
+# probability of below 20% prev 
+any.sth.below.20 <- apply(any.sth.samples, 1, function(x) mean(x<0.2))
+ETH_grid$any.sth.below20 <- any.sth.below.20
+
 # probability of being between 20% and 50% prevalence 
 any.sth.between.20_50 <- apply(any.sth.samples, 1, function(x) mean(x>0.2 & x<0.5))
 ETH_grid$any.sth.between.20_50 <- any.sth.between.20_50
@@ -363,7 +368,20 @@ ggplot()+
   geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.exceed50))+
   geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
   geom_sf(data=ETH_adm0, col = "black", fill = NA)+
-  scale_fill_scico(palette = "vik")+
+  scale_fill_scico(palette = "vik", limits = c(0, 1))+
   theme_void()
 
+# try creating discrete raster ----
 
+ETH_grid$discrete.r <- ifelse(ETH_grid$any.sth.exceed50>0.9, 1, 
+                              ifelse(ETH_grid$any.sth.between.20_50>0.9, 2, 
+                                     ifelse(ETH_grid$any.sth.below20>0.9, 3, 4)))
+
+ETH_grid$discrete.r <- as.factor(ETH_grid$discrete.r)
+
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=as.factor(discrete.r)))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  #scale_fill_manual(values = c("red", "orange", "green", "grey"))+
+  theme_void()
