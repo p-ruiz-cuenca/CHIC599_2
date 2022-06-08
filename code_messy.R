@@ -197,3 +197,6 @@ sth_1 %>%
 sth %>% 
   count(Quality, Year)
 # Quality: 1 = good quality, 2 = middle quality, 3 = poor quality
+
+sth %>% 
+  count(Year)
