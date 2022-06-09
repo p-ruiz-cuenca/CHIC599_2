@@ -13,6 +13,29 @@ library(ggplot2)
 library(sf)
 library(raster)
 library(tmap)
+library(lme4)
+library(PrevMap)
+library(scico)
+
+sth <- read.csv("data/ETH_sth.csv")
+sth$Asc_examined <- as.numeric(sth$Asc_examined)
+
+sth_sf <- st_as_sf(sth, coords = c("utm_x", "utm_y"))
+st_crs(sth_sf) <- 32638
+
+ETH_grid <- read.csv("data/ETH_grid.csv")
+
+
+ETH_adm0 <- st_read("ETH_files/ETH_adm/ETH_adm0.shp")
+ETH_adm0 <- st_transform(ETH_adm0, crs = 32638)
+
+ETH_adm1 <- st_read("ETH_files/ETH_adm/ETH_adm1.shp")
+ETH_adm1 <- st_transform(ETH_adm1, crs = 32638)
+
+ETH_adm2 <- st_read("ETH_files/ETH_adm/ETH_adm2.shp")
+ETH_adm2 <- st_transform(ETH_adm2, crs = 32638)
+
+
 
 ```
 
@@ -24,6 +47,18 @@ library(tmap)
   - Friction surface recorded as minutes required to travel one meter, walking only and with motorized vehicle
   - Travel time to nearest healthcare centre, in minutes 
 
+```{r STH_points, echo=TRUE }
+
+ggplot()+
+  geom_sf(data = ETH_adm1, fill = NA, col = "grey")+
+  geom_sf(data = ETH_adm0, fill = NA, col = "black")+
+  geom_sf(data = sth_sf, size = 0.5, col = "red")+
+  coord_sf()+
+  theme_void()
+
+```
+
+
 # STH Prevalence 
 
 WHO classifies prevalence into [three risk groups](https://apps.who.int/iris/bitstream/handle/10665/44804/9789241503129_eng.pdf), requiring mass-drug administrations at different frequencies. 
@@ -32,3 +67,18 @@ These risk groups are classified as follows:
 - High risk, >= 50% prevalence of any STH. Requires treatment twice a year.
 - Moderate risk, < 50% and >= 20% prevalence of any STH. Requires treatment once a year. 
 - Low risk, < 20% prevalence of any STH. No mass treatment required, done on a case-by-case basis. 
+
+# Models 
+
+## Generalised linear mixed-effects model (binomial)
+
+$$ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + Z_i$$
+
+## Geostatistical model (binomial)
+
+$$ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + S(x_i) + Z_i $$
+
+# Predicted prevalence 
+
+## Hookworms 
+

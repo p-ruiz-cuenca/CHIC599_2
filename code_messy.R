@@ -22,6 +22,9 @@ sth_1 <- sth %>%
 sth_sf <- st_as_sf(sth_1, coords = c("Longitude", "Latitude"))
 st_crs(sth_sf) <- 4326
 
+# sth_sf <- st_as_sf(sth, coords = c("utm_x", "utm_y"))
+# st_crs(sth_sf) <- 32638
+
 sth_sf <- st_transform(sth_sf, crs = 32638)
 
 sth$utm_x <- as.data.frame(st_coordinates(sth_sf))$X
@@ -43,7 +46,7 @@ ETH_adm2 <- st_transform(ETH_adm2, crs = 32638)
 ggplot()+
   geom_sf(data = ETH_adm1, fill = NA, col = "grey")+
   geom_sf(data = ETH_adm0, fill = NA, col = "black")+
-  geom_sf(data = sth_sf, size = 0.5, aes(col = as.factor(Year)))+
+  geom_sf(data = sth_sf, size = 0.5, col = "red")+
   coord_sf()+
   theme_void()
 
