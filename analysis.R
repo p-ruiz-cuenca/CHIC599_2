@@ -371,17 +371,58 @@ ggplot()+
   scale_fill_scico(palette = "vik", limits = c(0, 1))+
   theme_void()
 
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.between.20_50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1))+
+  theme_void()
+
 # try creating discrete raster ----
 
-ETH_grid$discrete.r <- ifelse(ETH_grid$any.sth.exceed50>0.9, 1, 
+ETH_grid$discrete.90 <- ifelse(ETH_grid$any.sth.exceed50>0.9, 1, 
                               ifelse(ETH_grid$any.sth.between.20_50>0.9, 2, 
                                      ifelse(ETH_grid$any.sth.below20>0.9, 3, 4)))
 
-ETH_grid$discrete.r <- as.factor(ETH_grid$discrete.r)
+ETH_grid$discrete.90 <- factor(ETH_grid$discrete.90, levels = c(1:4), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
+
+ETH_grid$discrete.75 <- ifelse(ETH_grid$any.sth.exceed50>0.75, 1, 
+                               ifelse(ETH_grid$any.sth.between.20_50>0.75, 2, 
+                                      ifelse(ETH_grid$any.sth.below20>0.75, 3, 4)))
+
+ETH_grid$discrete.75 <- factor(ETH_grid$discrete.75, levels = c(1:4), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
+
+ETH_grid$discrete.60 <- ifelse(ETH_grid$any.sth.exceed50>0.60, 1, 
+                               ifelse(ETH_grid$any.sth.between.20_50>0.60, 2, 
+                                      ifelse(ETH_grid$any.sth.below20>0.60, 3, 4)))
+
+ETH_grid$discrete.60 <- factor(ETH_grid$discrete.60, levels = c(1:4), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
+
+
 
 ggplot()+
-  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=as.factor(discrete.r)))+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.90))+
   geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
   geom_sf(data=ETH_adm0, col = "black", fill = NA)+
-  #scale_fill_manual(values = c("red", "orange", "green", "grey"))+
+  scale_fill_manual(values = c("red", "orange", "green", "grey"), drop = FALSE)+
+  theme_void()
+
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.75))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey"), drop = FALSE)+
+  theme_void()
+
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.60))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey"), drop = FALSE)+
   theme_void()
