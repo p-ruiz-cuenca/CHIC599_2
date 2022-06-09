@@ -16,6 +16,11 @@ sth$Asc_examined <- as.numeric(sth$Asc_examined)
 
 ETH_grid <- read.csv("data/ETH_grid.csv")
 
+length(unique(sth$ID.location))
+
+sth %>% 
+  count(Year)
+
 # Plot variables against outcome ----
 
 sth$HK_e.logit <- log((sth$HK_positive+0.5)/(sth$HK_examined-sth$HK_positive+0.5))
