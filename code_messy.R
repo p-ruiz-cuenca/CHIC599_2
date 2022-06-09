@@ -163,7 +163,7 @@ write.csv(sth_1, file = "data/ETH_sth.csv", row.names = FALSE)
 # ETH grid for prediction ----
 
 ETH_grid.sf <- st_make_grid(ETH_adm0,
-                            cellsize = 10000, # 5km resolution 
+                            cellsize = 10000, # 10km resolution 
                             what = "centers")
 
 ETH_grid <- as.data.frame(st_coordinates(ETH_grid.sf))
