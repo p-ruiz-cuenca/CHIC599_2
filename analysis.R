@@ -66,7 +66,7 @@ sth$ID.location <- create.ID.coords(sth, coords = ~utm_x+utm_y)
 
 glmer.fit.HK <- glmer(cbind(HK_positive, HK_examined-HK_positive) ~ 
                         altitude + riv_dist + 
-                        fric_w +
+                        travel_w +
                         (1|ID.location),
                       data = sth,
                       family = binomial)
@@ -97,10 +97,10 @@ summary(glmer.fit.TT)
 
 # Check residual spatial correlation ----
 
-range(dist(sth[,c("utm_x", "utm_y")]))
+range(dist(sth[,c("utm_x", "utm_y")]))/1000
 
 spat.corr.diagnostic(formula = HK_positive ~ 
-                       altitude + riv_dist + fric_w, 
+                       altitude + riv_dist + travel_w, 
                      units.m = ~HK_examined,
                      coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
                      data = sth, 
@@ -115,7 +115,7 @@ spat.corr.diagnostic(formula = Asc_positive ~
                      coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
                      data = sth[complete.cases(sth),], 
                      likelihood = "Binomial",
-                     uvec = seq(0, 600, length = 15), 
+                     uvec = seq(0, 500, length = 15), 
                      n.sim = 10000,
                      which.test = "variogram")
 
@@ -143,6 +143,9 @@ mcml <- control.mcmc.MCML(n.sim=10000, # number of simulations
 sth <- sth[complete.cases(sth),]
 
 ## HK ----
+
+# first round 
+
 # get beta guesses
 HK.beta.guess <- coef(glm(cbind(HK_positive, HK_examined-HK_positive) ~
                             altitude + riv_dist + fric_w,
@@ -161,9 +164,9 @@ spat.corr.diagnostic(formula = HK_positive ~
                      which.test = "variogram",
                      lse.variogram = TRUE)
 
-HK.sigma2.guess <- 2.481438
-HK.phi.guess <- 43.527821
-HK.tau2.guess <- 0.718507
+HK.sigma2.guess <- 2.4847237
+HK.phi.guess <- 43.4145792
+HK.tau2.guess <- 0.7316579
 
 par0.HK <- c(HK.beta.guess, HK.sigma2.guess, HK.phi.guess, HK.tau2.guess)
 
@@ -172,7 +175,7 @@ par0.HK <- c(HK.beta.guess, HK.sigma2.guess, HK.phi.guess, HK.tau2.guess)
 geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
                                            altitude + riv_dist + fric_w,
                                          units.m = ~ HK_examined,
-                                         coords = ~utm_x+utm_y,
+                                         coords = ~I(utm_x/1000)+I(utm_y/1000),
                                          data = sth,
                                          par0 = par0.HK,
                                          control.mcmc = mcml,
@@ -181,31 +184,68 @@ geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
                                                             HK.tau2.guess/HK.sigma2.guess),
                                          method = "nlminb")
 
+summary(geostat.fit.HK, log.cov.pars = FALSE)
+
+# round 2, 3, 4
+
+par0.HK <- coef(geostat.fit.HK)
+
+# Fit geostat model 
+
+geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
+                                           altitude + riv_dist + fric_w,
+                                         units.m = ~ HK_examined,
+                                         coords = ~I(utm_x/1000)+I(utm_y/1000),
+                                         data = sth,
+                                         par0 = par0.HK,
+                                         control.mcmc = mcml,
+                                         kappa = 0.5,
+                                         start.cov.pars = c(HK.phi.guess,
+                                                            HK.tau2.guess/HK.sigma2.guess),
+                                         method = "nlminb")
+
+summary(geostat.fit.HK, log.cov.pars = FALSE)
+
 # Create predicted prevalence raster 
 HK.pred.prev <- spatial.pred.binomial.MCML(geostat.fit.HK,
                                            grid.pred = ETH_grid[,1:2],
                                            predictors = ETH_grid[,3:8],
                                            control.mcmc = mcml,
                                            scale.predictions = c("logit", 
-                                                                 "prevalence"))
+                                                                 "prevalence"),
+                                           thresholds = c(0.2, 0.5),
+                                           scale.thresholds = "prevalence")
 
 plot(HK.pred.prev, "prevalence", "predictions")
 plot(HK.pred.prev, type = "prevalence", summary = "predictions")
 # plot(HK.pred.prev, type = "logit", summary = "standard.errors")
   # didn't include 'standard.errors=TRUE' in spatial.pred.binomial.MCML()
-
+plot(HK.pred.prev, summary = "exceedance.prob")
 # extract samples and back transform from logit to prevalence 
 HK.pred.samples <- 1/(1+exp(-HK.pred.prev$samples))
 
 # mean predicted prevalence
-HK.prev.mean <- apply(HK.prev.samples, 1, mean)
+HK.prev.mean <- apply(HK.pred.samples, 1, mean)
 ETH_grid$HK.prev.mean <- HK.prev.mean
 
-# "anti-prevalence", i.e. prevalence of NO INFECTION 
-HK.antiprev.mean <- apply(HK.prev.samples, 1, function(x) mean(1-x))
-ETH_grid$HK.antiprev.mean <- HK.antiprev.mean
+# exceedence probabilities 
+
+ETH_grid$HK.between.20_50 <- apply(HK.pred.samples, 1,
+                                   function(x) mean(x>0.2 & x<0.5))
+
+ETH_grid$HK.exceed50 <- apply(HK.pred.samples, 1, 
+                              function(x) mean(x>0.5))
+
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.between.20_50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1))+
+  theme_void()
 
 ## Asc ----
+
+# round 1
 
 # get beta.guess
 Asc.beta.guess <- coef(glm(cbind(Asc_positive, Asc_examined-Asc_positive)~
@@ -234,7 +274,7 @@ par0.Asc <- c(Asc.beta.guess, Asc.sigma2.guess, Asc.phi.guess, Asc.tau2.guess)
 geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
                                             altitude + riv_dist + travel_w,
                                           units.m = ~Asc_examined,
-                                          coords = ~utm_x+utm_y, # change to km 
+                                          coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
                                           data = sth,
                                           par0 = par0.Asc,
                                           control.mcmc = mcml,
@@ -242,6 +282,26 @@ geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
                                           start.cov.pars = c(Asc.phi.guess,
                                                              Asc.tau2.guess/Asc.sigma2.guess),
                                           method = "nlminb")
+
+summary(geostat.fit.Asc, log.cov.pars = FALSE)
+
+# round 2, 3, 4
+
+par0.Asc <- coef(geostat.fit.Asc)
+
+geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
+                                            altitude + riv_dist + travel_w,
+                                          units.m = ~Asc_examined,
+                                          coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                                          data = sth,
+                                          par0 = par0.Asc,
+                                          control.mcmc = mcml,
+                                          kappa = 0.5,
+                                          start.cov.pars = c(Asc.phi.guess,
+                                                             Asc.tau2.guess/Asc.sigma2.guess),
+                                          method = "nlminb")
+
+summary(geostat.fit.Asc, log.cov.pars = FALSE)
 
 # Create predicted prevalence 
 
@@ -262,11 +322,24 @@ Asc.pred.samples <- 1/(1+exp(-Asc.pred.prev$samples))
 Asc.prev.mean <- apply(Asc.pred.samples, 1, mean)
 ETH_grid$Asc.prev.mean <- Asc.prev.mean
 
-# Mean anti-prevalence 
-Asc.antiprev.mean <- apply(Asc.pred.samples, 1, function(x) mean(1-x))
-ETH_grid$Asc.antiprev.mean <- Asc.antiprev.mean
+# exceedence probabilities 
+
+ETH_grid$Asc.between.20_50 <- apply(Asc.pred.samples, 1,
+                                   function(x) mean(x>0.2 & x<0.5))
+
+ETH_grid$Asc.exceed50 <- apply(Asc.pred.samples, 1, 
+                              function(x) mean(x>0.5))
+
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=Asc.prev.mean))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1))+
+  theme_void()
 
 ## TT ----
+
+# round 1
 
 # get beta.guess
 
@@ -307,6 +380,27 @@ geostat.fit.TT <- binomial.logistic.MCML(formula = TT_positive ~
                                                             TT.tau2.guess/TT.sigma2.guess),
                                          method = "nlminb")
 
+summary(geostat.fit.TT, log.cov.pars = FALSE)
+
+# round 2, 3, 4, 5, 6
+
+par0.TT <- coef(geostat.fit.TT)
+
+geostat.fit.TT <- binomial.logistic.MCML(formula = TT_positive ~
+                                           altitude + riv_dist + travel_w,
+                                         units.m = ~TT_examined,
+                                         coords = ~I(utm_x/1000)+
+                                           I(utm_y/1000), # change to km 
+                                         data = sth,
+                                         par0 = par0.TT,
+                                         control.mcmc = mcml,
+                                         kappa = 0.5,
+                                         start.cov.pars = c(TT.phi.guess,
+                                                            TT.tau2.guess/TT.sigma2.guess),
+                                         method = "nlminb")
+
+summary(geostat.fit.TT, log.cov.pars = FALSE)
+
 # predicted prevalence 
 
 TT.pred.prev <- spatial.pred.binomial.MCML(geostat.fit.TT,
@@ -327,10 +421,20 @@ TT.pred.samples <- 1/(1+exp(-TT.pred.prev$samples))
 TT.prev.mean <- apply(TT.pred.samples, 1, mean)
 ETH_grid$TT.prev.mean <- TT.prev.mean
 
-# Mean anti-prevalence 
+# exceedence probabilities 
 
-TT.antiprev.mean <- apply(TT.pred.samples, 1, function(x) mean(1-x))
-ETH_grid$TT.antiprev.mean <- TT.antiprev.mean
+ETH_grid$TT.between.20_50 <- apply(TT.pred.samples, 1,
+                                    function(x) mean(x>0.2 & x<0.5))
+
+ETH_grid$TT.exceed50 <- apply(TT.pred.samples, 1, 
+                               function(x) mean(x>0.5))
+
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=TT.exceed50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1))+
+  theme_void()
 
 # Raster of "AT LEAST ONE SPECIES" ----
 
@@ -345,6 +449,9 @@ plot(any.sth.r)
 
 # calculate samples for AT LEAST ONE STH prevalence 
 any.sth.samples <- 1-((1-HK.pred.samples)*(1-Asc.pred.samples)*(1-TT.pred.samples))
+
+# mean prevalence 
+ETH_grid$any.sth.prev.mean <- apply(any.sth.samples, 1, mean)
 
 # probability of exceeding 50% prevalence 
 any.sth.ex.50 <- apply(any.sth.samples, 1, function(x) mean(x>0.5))
