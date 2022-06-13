@@ -80,65 +80,65 @@ Friction surface estimates the minutes required to travel one meter over land, p
 Similarly, the time to nearest healthcare centre estimates the minutes required to reach said centre, both walking-only and with motorized vehicle. 
 I also downloaded a shapefile of all the rivers in Ethiopia which I used to create a raster of distance to the nearest river.  
 
-```{r covariates_figure, fig.cap= "Covariate rasters for Ethiopia. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes. White dots represent STH data collection points.", fig.height=26, fig.width=20}
+```{r covariates_figure, fig.cap= "\\textit{Covariate rasters for Ethiopia. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes. White dots represent STH data collection points.}", fig.height=26, fig.width=20}
 
 r1 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = altitude))+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
-  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  geom_sf(data = sth_sf, col = "white", size = 2)+
   scale_fill_scico(palette = "bamako", name = "Altitude (m)")+
   theme_void()+
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 14))
+  theme(legend.text = element_text(size = 15),
+        legend.title = element_text(size = 19))
 
 r2 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = riv_dist))+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
-  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  geom_sf(data = sth_sf, col = "white", size = 2)+
   scale_fill_scico(palette = "davos", name = "Distance (km)")+
   theme_void()+
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 14))
+  theme(legend.text = element_text(size = 15),
+        legend.title = element_text(size = 19))
 
 r3 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = fric_w))+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
-  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  geom_sf(data = sth_sf, col = "white", size = 2)+
   scale_fill_scico(palette = "acton", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 14))
+  theme(legend.text = element_text(size = 15),
+        legend.title = element_text(size = 19))
 
 r4 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = fric_m))+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
-  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  geom_sf(data = sth_sf, col = "white", size = 2)+
   scale_fill_scico(palette = "acton", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 14))
+  theme(legend.text = element_text(size = 15),
+        legend.title = element_text(size = 19))
 
 r5 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = travel_w))+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
-  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  geom_sf(data = sth_sf, col = "white", size = 2)+
   scale_fill_scico(palette = "oslo", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 14))
+  theme(legend.text = element_text(size = 15),
+        legend.title = element_text(size = 19))
 
 r6 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = travel_m))+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
-  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  geom_sf(data = sth_sf, col = "white", size = 2)+
   scale_fill_scico(palette = "oslo", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 10),
-        legend.title = element_text(size = 14))
+  theme(legend.text = element_text(size = 15),
+        legend.title = element_text(size = 19))
 
 plot_grid(r1, r2, r3, r4, r5, r6,
           labels = "AUTO",
-          label_size = 20,
+          label_size = 25,
           align = "hv",
           nrow = 3,
           ncol = 2)
@@ -217,7 +217,7 @@ I also created a fourth category to indicate areas where confidence was too low 
 
 There were a total of 146 unique data collection locations across Ethiopia (Figure 2). The data collection occurred across a number of years, at varying rates, as described in Table 1. Due to lack of multiple rasters representing the change in time, this temporal change was not accounted for in any further analyses. 
 
-```{r STH_locations, fig.cap= "STH data collection locations.", fig.height=10, fig.width=5}
+```{r STH_locations, fig.cap= "\\textit{STH data collection locations.}", fig.height=3, fig.width=7}
 
 ggplot()+
   geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.15)+
@@ -227,6 +227,7 @@ ggplot()+
 
 ```
 
+\newpage
 ```{r STH_years_table, results='markup'}
 
 table.1 <- sth %>%
@@ -265,15 +266,18 @@ for (i in 1:length(species)) {
       ggplot(sth, aes_string(x = vars[j],
                              y = paste0(species[i], "_e.logit")))+
       geom_point()+
-      labs(x = vars_labels[j], y = "Empirical logit")
+      labs(x = vars_labels[j], y = "logit")+
+      theme(axis.text = element_text(size = 5),
+            axis.title = element_text(size = 8))
     
   }
   
 }
 
+
 ```
 
-```{r HK_e.logit, fig.cap="Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
+```{r HK_e.logit, fig.cap="\\textit{Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}", fig.height=4, fig.width=8}
 
 plot_grid(plot.list$HK$altitude, plot.list$HK$riv_dist,
           plot.list$HK$fric_w,plot.list$HK$fric_m,
@@ -331,7 +335,7 @@ variog.HK <- spat.corr.diagnostic(formula = HK_positive ~
 
 ```
 
-```{r HK.variogram_2, fig.cap="Variogram of Hookworm data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model."}
+```{r HK.variogram_2, fig.cap="\\textit{Variogram of Hookworm data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model.}", fig.height=4, fig.width=8}
 
 HK.variog.df <- data.frame(
   u = as.numeric(variog.HK$distance.bins),
@@ -389,7 +393,7 @@ knitr::kable(HK.geostat.params.df, "pipe", digits = 3,
 
 Using this model, I created three rasters: one showing the predicted prevalence of hookworms across Ethiopia, one showing the probability of having between 20% and 50% prevalence and the final one showing the probability of exceeding 50% prevalence (Figure 5). 
 
-```{r HK.prediction.rasters, fig.cap="Rasters for Hookworm estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
+```{r HK.prediction.rasters, fig.cap="*Rasters for Hookworm estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence.*", fig.width=8, fig.height=4}
 
 ETH_grid$HK.prev.mean <- ETH_grid$HK.prev.mean*100
 
@@ -428,12 +432,13 @@ The predicted prevalence shows a pocket of high prevalence of hookworm in the ea
 This area does overlap with a high probability of exceeding 50% prevalence. 
 However, there is low probability of having between 20% and 50% prevalence across the entire country. 
 
+\newpage
 
 ## *Ascaris lumbricoides* 
 
 The associations between each covariate and the logit transformation for the Ascaris lumbricoides data is plotted in Figure 6. 
 
-```{r Asc_e.logit, fig.cap="Covariates against empirical logit transformation of Ascaris lumbricoides data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
+```{r Asc_e.logit, fig.cap="\\textit{Covariates against empirical logit transformation of Ascaris lumbricoides data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}", fig.height=4, fig.width=8}
 
 plot_grid(plot.list$Asc$altitude, plot.list$Asc$riv_dist,
           plot.list$Asc$fric_w,plot.list$Asc$fric_m,
@@ -477,7 +482,7 @@ variog.Asc <- spat.corr.diagnostic(formula = Asc_positive ~
 
 ```
 
-```{r Asc.variogram_2, fig.cap="Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model."}
+```{r Asc.variogram_2, fig.cap="\\textit{Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model.}", fig.height=4, fig.width=8}
 
 Asc.variog.df <- data.frame(
   u = as.numeric(variog.Asc$distance.bins),
@@ -533,7 +538,7 @@ knitr::kable(Asc.geostat.params.df, "pipe", digits = 3,
 
 I used this model to create the same three rasters as I did for hookworms: predicted prevalence, probability of having between 20% and 50% prevalence and probability of exceeding 50% prevalence (Figure 8). 
 
-```{r Asc.prediction.rasters, fig.cap="Rasters for Ascaris lumbricoides estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
+```{r Asc.prediction.rasters, fig.cap="*Rasters for Ascaris lumbricoides estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence.*", fig.height=4, fig.width=8}
 
 ETH_grid$Asc.prev.mean <- ETH_grid$Asc.prev.mean*100
 
@@ -570,11 +575,13 @@ plot_grid(Asc.1, Asc.2, Asc.3,
 
 These maps show that the prevalence for Ascaris lumbricoides across Ethiopia is very low. 
 
+\newpage
+
 ## *Trichuris trichuria*
 
 I plotted the logit transformed Trichuris trichuria data against each of the covariates (Figure 9). 
 
-```{r TT_e.logit, fig.cap="Covariates against empirical logit transformation of Trichuris trichuria data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
+```{r TT_e.logit, fig.cap="\\textit{Covariates against empirical logit transformation of Trichuris trichuria data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}", fig.height=4, fig.width=8}
 
 plot_grid(plot.list$TT$altitude, plot.list$TT$riv_dist,
           plot.list$TT$fric_w,plot.list$TT$fric_m,
@@ -617,7 +624,7 @@ variog.TT <- spat.corr.diagnostic(formula = TT_positive ~
 
 ```
 
-```{r TT.variogram_2, fig.cap="Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model."}
+```{r TT.variogram_2, fig.cap="\\textit{Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model.}", fig.height=4, fig.width=8}
 
 TT.variog.df <- data.frame(
   u = as.numeric(variog.TT$distance.bins),
@@ -671,7 +678,7 @@ knitr::kable(TT.geostat.params.df, "pipe", digits = 3,
 
 ```
 
-```{r TT.prediction.rasters, fig.cap="Rasters for Trichuris trichuria estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
+```{r TT.prediction.rasters, fig.cap="*Rasters for Trichuris trichuria estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence.*", fig.height=4, fig.width=8}
 
 ETH_grid$TT.prev.mean <- ETH_grid$TT.prev.mean*100
 
@@ -707,12 +714,14 @@ plot_grid(TT.1, TT.2, TT.3,
 
 These maps show that, overall, there is very low prevalence of *Trichuris trichuria* across Ethiopia. The only exception is a small area in the eastern region of Ethiopia, where prevalence appears to be extremely high. 
 
+\newpage
+
 ## Any STH species 
 
 As described in the methods section, I combined the estimated prevalences of the three STH species to create an estimated prevalence of any STH species.
 I used this estimate to create 3 rasters: one showing the estimated prevalence, one showing the probability of having between 20% and 50% prevalence and a third showing the probability of exceeding 50% prevalence (Figure 12). 
 
-```{r any.sth.prediction.rasters, fig.cap="Rasters for any STH species' estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
+```{r any.sth.prediction.rasters, fig.cap="*Rasters for any STH species' estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence.*", fig.height=4, fig.width=8}
 
 ETH_grid$any.sth.prev.mean <- ETH_grid$any.sth.prev.mean*100
 
@@ -750,7 +759,7 @@ These maps show that, as described above, there is an area in the eastern region
 
 I combined these estimates to create a discrete raster, identifying what strategy should be used in which area. I created these with three levels of confidence (Figure 13).
 
-```{r discrete.rasters, fig.cap="STH control strategies to use for each area, by confidence level. A: 90% confidence, B: 75% confidence C: 60% confidence."}
+```{r discrete.rasters, fig.cap="*STH control strategies to use for each area, by confidence level. A: 90% confidence, B: 75% confidence C: 60% confidence.*", fig.height=4, fig.width=8}
 
 ETH_grid$discrete.90 <- factor(ETH_grid$discrete.90,
                                levels = c("Once a year", "Twice a year",
@@ -810,14 +819,18 @@ plot_grid(drow, legend_d,
 
 These maps show that, depending on the level of confidence, different areas would require different interventions. 
 
+\newpage
+
 # Conclusion 
 
 In this report, I used geostatistical methods to produce an estimate of STH prevalence across Ethiopia.
 I used this estimate to create maps identifying which areas required which control strategy, depending on the level of confidence needed. 
 
 These maps showed that, overall, more data would be better to create a more informative estimate.
-However, given that getting more and better quality data consumes resources, other avenues can be explored. By considering the temporal change of both the STH data and the covariates, I could have created a better estimate of the prevalence. 
+However, given that getting more and better quality data is not always feasible, considering other options is important.
+My choice of covariates might have been inadequate, given the level of uncertainty in the final plots.
+Including covariates which represented temporal changes, as well as spatial ones, could have produced more accurate and dynamic maps. 
 
-\newpage
+This report also shows the importance of working alongside policy makes in making decisions. Changing the confidence level of the final data can have different outcomes. Ultimately, this decision is set by policy makers and should be done in conversation with other professionals, including health economists and anthropologists. 
 
 # References 

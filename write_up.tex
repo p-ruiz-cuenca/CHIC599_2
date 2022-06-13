@@ -177,13 +177,7 @@ which I used to create a raster of distance to the nearest river.
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/covariates_figure-1.pdf}
-\caption{Covariate rasters for Ethiopia. A: Altitude, in meters. B:
-Distance to nearest river, in kilometers. C: Friction surface walking
-only, in minutes required to travel one meter. D: Friction surface
-motorized vehicle, same units as C. E: Walking only travel time to
-nearest healthcare centre, in minutes. F: Motorized vehicle travel time
-to nearest healthcare centre, in minutes. White dots represent STH data
-collection points.}
+\caption{\textit{Covariate rasters for Ethiopia. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes. White dots represent STH data collection points.}}
 \end{figure}
 
 \hypertarget{data-analysis}{%
@@ -312,8 +306,10 @@ was not accounted for in any further analyses.
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/STH_locations-1.pdf}
-\caption{STH data collection locations.}
+\caption{\textit{STH data collection locations.}}
 \end{figure}
+
+\newpage
 
 \begin{longtable}[]{@{}rr@{}}
 \caption{Number of STH surveys performed by year.}\tabularnewline
@@ -348,13 +344,7 @@ association with each of the covariates (Figure 3).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/HK_e.logit-1.pdf}
-\caption{Covariates against empirical logit transformation of hookworm
-data. A: Altitude, in meters. B: Distance to nearest river, in
-kilometers. C: Friction surface walking only, in minutes required to
-travel one meter. D: Friction surface motorized vehicle, same units as
-C. E: Walking only travel time to nearest healthcare centre, in minutes.
-F: Motorized vehicle travel time to nearest healthcare centre, in
-minutes.}
+\caption{\textit{Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}}
 \end{figure}
 
 Focusing on altitude, most of the data points are located in the middle
@@ -381,9 +371,7 @@ showed residual spatial correlation (Figure 4).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/HK.variogram_2-1.pdf}
-\caption{Variogram of Hookworm data. Plot shows evidence of residual
-spatial correlation that remains unaccounted for by the generalised
-linear mixed-effects model.}
+\caption{\textit{Variogram of Hookworm data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model.}}
 \end{figure}
 
 I followed by building a binomial geostatistical model, as described in
@@ -402,9 +390,9 @@ Hookworms}\tabularnewline
 & Estimate & StdErr \\
 \midrule
 \endhead
-\(\sigma^2\) & 3.110 & 0.091 \\
-\(\phi\) & 76.197 & 0.006 \\
-\(\tau^2\) & 1.129 & 0.454 \\
+\(\sigma^2\) & 3.135 & 0.091 \\
+\(\phi\) & 77.525 & 0.006 \\
+\(\tau^2\) & 1.149 & 0.456 \\
 \bottomrule
 \end{longtable}
 
@@ -416,9 +404,9 @@ probability of exceeding 50\% prevalence (Figure 5).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/HK.prediction.rasters-1.pdf}
-\caption{Rasters for Hookworm estimates. A: Predicted prevalence. B:
-Probability of having prevalence between 20\% and 50\%. C: Probability
-of exceeding 50\% prevalence.}
+\caption{\emph{Rasters for Hookworm estimates. A: Predicted prevalence.
+B: Probability of having prevalence between 20\% and 50\%. C:
+Probability of exceeding 50\% prevalence.}}
 \end{figure}
 
 The predicted prevalence shows a pocket of high prevalence of hookworm
@@ -426,6 +414,8 @@ in the eastern region of Ethiopia. This area does overlap with a high
 probability of exceeding 50\% prevalence. However, there is low
 probability of having between 20\% and 50\% prevalence across the entire
 country.
+
+\newpage
 
 \hypertarget{ascaris-lumbricoides}{%
 \subsection{\texorpdfstring{\emph{Ascaris
@@ -437,13 +427,7 @@ the Ascaris lumbricoides data is plotted in Figure 6.
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/Asc_e.logit-1.pdf}
-\caption{Covariates against empirical logit transformation of Ascaris
-lumbricoides data. A: Altitude, in meters. B: Distance to nearest river,
-in kilometers. C: Friction surface walking only, in minutes required to
-travel one meter. D: Friction surface motorized vehicle, same units as
-C. E: Walking only travel time to nearest healthcare centre, in minutes.
-F: Motorized vehicle travel time to nearest healthcare centre, in
-minutes.}
+\caption{\textit{Covariates against empirical logit transformation of Ascaris lumbricoides data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}}
 \end{figure}
 
 All the associations are very similar to those seen for the hookworm
@@ -463,9 +447,7 @@ correlation (Figure 7).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/Asc.variogram_2-1.pdf}
-\caption{Variogram of Ascaris lumbricoides data. Plot shows evidence of
-residual spatial correlation that remains unaccounted for by the
-generalised linear mixed-effects model.}
+\caption{\textit{Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model.}}
 \end{figure}
 
 I performed four rounds of parameter guessing before reaching a final
@@ -482,9 +464,9 @@ Ascaris lumbricoides}\tabularnewline
 & Estimate & StdErr \\
 \midrule
 \endhead
-\(\sigma^2\) & 1.557 & 0.273 \\
-\(\phi\) & 173.882 & 0.003 \\
-\(\tau^2\) & 0.979 & 0.759 \\
+\(\sigma^2\) & 1.561 & 0.273 \\
+\(\phi\) & 174.051 & 0.003 \\
+\(\tau^2\) & 0.991 & 0.761 \\
 \bottomrule
 \end{longtable}
 
@@ -495,13 +477,15 @@ hookworms: predicted prevalence, probability of having between 20\% and
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/Asc.prediction.rasters-1.pdf}
-\caption{Rasters for Ascaris lumbricoides estimates. A: Predicted
+\caption{\emph{Rasters for Ascaris lumbricoides estimates. A: Predicted
 prevalence. B: Probability of having prevalence between 20\% and 50\%.
-C: Probability of exceeding 50\% prevalence.}
+C: Probability of exceeding 50\% prevalence.}}
 \end{figure}
 
 These maps show that the prevalence for Ascaris lumbricoides across
 Ethiopia is very low.
+
+\newpage
 
 \hypertarget{trichuris-trichuria}{%
 \subsection{\texorpdfstring{\emph{Trichuris
@@ -513,13 +497,7 @@ the covariates (Figure 9).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/TT_e.logit-1.pdf}
-\caption{Covariates against empirical logit transformation of Trichuris
-trichuria data. A: Altitude, in meters. B: Distance to nearest river, in
-kilometers. C: Friction surface walking only, in minutes required to
-travel one meter. D: Friction surface motorized vehicle, same units as
-C. E: Walking only travel time to nearest healthcare centre, in minutes.
-F: Motorized vehicle travel time to nearest healthcare centre, in
-minutes.}
+\caption{\textit{Covariates against empirical logit transformation of Trichuris trichuria data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}}
 \end{figure}
 
 The only notable difference of the Trichuris trichuria logit data is
@@ -537,9 +515,7 @@ spatial correlation (figure 10).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/TT.variogram_2-1.pdf}
-\caption{Variogram of Ascaris lumbricoides data. Plot shows evidence of
-residual spatial correlation that remains unaccounted for by the
-generalised linear mixed-effects model.}
+\caption{\textit{Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model.}}
 \end{figure}
 
 I ran the parameter guesses six times until I reached a final model. The
@@ -558,24 +534,26 @@ Trichuris trichuria}\tabularnewline
 & Estimate & StdErr \\
 \midrule
 \endhead
-\(\sigma^2\) & 1.759 & 0.169 \\
-\(\phi\) & 74.864 & 0.006 \\
-\(\tau^2\) & 0.649 & 0.832 \\
+\(\sigma^2\) & 1.792 & 0.177 \\
+\(\phi\) & 80.933 & 0.006 \\
+\(\tau^2\) & 0.659 & 0.845 \\
 \bottomrule
 \end{longtable}
 
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/TT.prediction.rasters-1.pdf}
-\caption{Rasters for Trichuris trichuria estimates. A: Predicted
+\caption{\emph{Rasters for Trichuris trichuria estimates. A: Predicted
 prevalence. B: Probability of having prevalence between 20\% and 50\%.
-C: Probability of exceeding 50\% prevalence.}
+C: Probability of exceeding 50\% prevalence.}}
 \end{figure}
 
 These maps show that, overall, there is very low prevalence of
 \emph{Trichuris trichuria} across Ethiopia. The only exception is a
 small area in the eastern region of Ethiopia, where prevalence appears
 to be extremely high.
+
+\newpage
 
 \hypertarget{any-sth-species}{%
 \subsection{Any STH species}\label{any-sth-species}}
@@ -590,9 +568,9 @@ exceeding 50\% prevalence (Figure 12).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/any.sth.prediction.rasters-1.pdf}
-\caption{Rasters for any STH species' estimates. A: Predicted
+\caption{\emph{Rasters for any STH species' estimates. A: Predicted
 prevalence. B: Probability of having prevalence between 20\% and 50\%.
-C: Probability of exceeding 50\% prevalence.}
+C: Probability of exceeding 50\% prevalence.}}
 \end{figure}
 
 These maps show that, as described above, there is an area in the
@@ -606,12 +584,15 @@ of confidence (Figure 13).
 \begin{figure}
 \centering
 \includegraphics{write_up_files/figure-latex/discrete.rasters-1.pdf}
-\caption{STH control strategies to use for each area, by confidence
-level. A: 90\% confidence, B: 75\% confidence C: 60\% confidence.}
+\caption{\emph{STH control strategies to use for each area, by
+confidence level. A: 90\% confidence, B: 75\% confidence C: 60\%
+confidence.}}
 \end{figure}
 
 These maps show that, depending on the level of confidence, different
 areas would require different interventions.
+
+\newpage
 
 \hypertarget{conclusion}{%
 \section{Conclusion}\label{conclusion}}
@@ -623,11 +604,17 @@ the level of confidence needed.
 
 These maps showed that, overall, more data would be better to create a
 more informative estimate. However, given that getting more and better
-quality data consumes resources, other avenues can be explored. By
-considering the temporal change of both the STH data and the covariates,
-I could have created a better estimate of the prevalence.
+quality data is not always feasible, considering other options is
+important. My choice of covariates might have been inadequate, given the
+level of uncertainty in the final plots. Including covariates which
+represented temporal changes, as well as spatial ones, could have
+produced more accurate and dynamic maps.
 
-\newpage
+This report also shows the importance of working alongside policy makes
+in making decisions. Changing the confidence level of the final data can
+have different outcomes. Ultimately, this decision is set by policy
+makers and should be done in conversation with other professionals,
+including health economists and anthropologists.
 
 \hypertarget{references}{%
 \section*{References}\label{references}}
