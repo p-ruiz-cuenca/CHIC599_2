@@ -67,7 +67,7 @@ The data set contained geo-referrenced school surveys carried out across the cou
 Each entry had a geo-reliability and quality classification, referring to the reliability of the recorded latitude and longitude and the quality of the data. 
 In my analyses, I only included those entries that had a reliable location recorded and were of sufficient quality. 
 
-I used previous research to decide which covariates to download [@alelignSoilTransmittedHelminthInfections2015; @anegagrieEnvironmentalCharacteristicsHousehold2021; @eyayuPrevalenceIntensityInfection2022]. These included elevation, sourced from DIVA GIS [REF], friction surface and time to nearest healthcare centre, downloaded from the Malaria Atlas Project [ REF ] [FIGURE REF ].
+I used previous research to decide which covariates to download [@alelignSoilTransmittedHelminthInfections2015; @anegagrieEnvironmentalCharacteristicsHousehold2021; @eyayuPrevalenceIntensityInfection2022]. These included elevation, sourced from [DIVA GIS](https://www.diva-gis.org/) [@DIVAGISFreeSimple], friction surface and time to nearest healthcare centre, downloaded from the [Malaria Atlas Project](https://malariaatlas.org/) [@MalariaAtlasProject] (Figure 1).
 Friction surface estimates the minutes required to travel one meter over land, producing a walking-only raster and a motorized vehicle raster. 
 Similarly, the time to nearest healthcare centre estimates the minutes required to reach said centre, both walking-only and with motorized vehicle. 
 I also downloaded a shapefile of all the rivers in Ethiopia which I used to create a raster of distance to the nearest river.  
