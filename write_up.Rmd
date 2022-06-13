@@ -265,7 +265,7 @@ for (i in 1:length(species)) {
 
 ```
 
-```{r HK_e.logit, fig.cap="Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", out.height='50%', out.width='100%'}
+```{r HK_e.logit, fig.cap="Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
 
 plot_grid(plot.list$HK$altitude, plot.list$HK$riv_dist,
           plot.list$HK$fric_w,plot.list$HK$fric_m,
