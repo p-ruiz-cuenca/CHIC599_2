@@ -381,7 +381,7 @@ rownames(HK.geostat.params.df) <- c("$\\sigma^2$",
                                  "$\\tau^2$")
 
 knitr::kable(HK.geostat.params.df, "pipe", digits = 3,
-             caption = "Estimated parameters from binomial geostatistical model")
+             caption = "Estimated parameters from binomial geostatistical model - Hookworms")
 
 
 ```
@@ -514,26 +514,148 @@ geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
 ```
 
 I performed four rounds of parameter guessing before reaching a final binomial geostatistical model.
-These are described in [TABLE REF].
-I used this model to create the same three rasters as I did for hookworms: predicted prevalence, probability of having between 20% and 50% prevalence and probability of exceeding 50% prevalence [Figure REF]. 
+These are described in Table 3.
 
-[Figure]
+```{r Asc.geostat.params, results='markup'}
+
+Asc.geostat.params.df <- as.data.frame(summary(geostat.fit.Asc,
+                                           log.cov.pars=FALSE)$cov.pars)
+
+rownames(Asc.geostat.params.df) <- c("$\\sigma^2$",
+                                 "$\\phi$",
+                                 "$\\tau^2$")
+
+knitr::kable(Asc.geostat.params.df, "pipe", digits = 3,
+             caption = "Estimated parameters from binomial geostatistical model - Ascaris lumbricoides")
+
+
+```
+
+I used this model to create the same three rasters as I did for hookworms: predicted prevalence, probability of having between 20% and 50% prevalence and probability of exceeding 50% prevalence (Figure 8). 
+
+```{r Asc.prediction.rasters, fig.cap="Rasters for Ascaris lumbricoides estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
+
+ETH_grid$Asc.prev.mean <- ETH_grid$Asc.prev.mean*100
+
+Asc.1 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=Asc.prev.mean))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "batlow", limits = c(0, 100),
+                   name = "Prevalence")+
+  theme_void()
+
+Asc.2 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=Asc.between.20_50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+Asc.3 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=Asc.exceed50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+plot_grid(Asc.1, Asc.2, Asc.3, 
+          labels = "AUTO", align = "hv",
+          nrow = 1)
+
+```
+
 
 These maps show that the prevalence for Ascaris lumbricoides across Ethiopia is very low. 
 
-Trichuris trichuria 
+## *Trichuris trichuria*
 
-I plotted the logit transformed Trichuris trichuria data against each of the covariates [FIGURE ref]. 
+I plotted the logit transformed Trichuris trichuria data against each of the covariates (Figure 9). 
 
-[ FIGURE ]
+```{r TT_e.logit, fig.cap="Covariates against empirical logit transformation of Trichuris trichuria data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
 
-The only notable difference of the Trichuris trichuria logit data is that when plotting it against the distance to river it seems to be more spread out than the data points for hookworms and Ascaris lumbricoides. All other associations are very similar. Therefore, I used the same covariates as I did in models for hookworms and for Ascaris lumbricoides. 
+plot_grid(plot.list$TT$altitude, plot.list$TT$riv_dist,
+          plot.list$TT$fric_w,plot.list$TT$fric_m,
+          plot.list$TT$travel_w, plot.list$TT$travel_m,
+          labels = "AUTO",
+          align = "hv",
+          nrow = 3, ncol = 2)
 
-The binomial generalised linear mixed-effects model also showed evidence of overdispersion for Trichuris trichuria, as the variance of the random effects was [INSERT VALUE]. The variogram showed evidence of residual spatial correlation. [ FIGURE ]
+```
 
-[FIGURE variogram ] 
+The only notable difference of the Trichuris trichuria logit data is that when plotting it against the distance to river it seems to be more spread out than the data points for hookworms and *Ascaris lumbricoides*.
+All other associations are very similar. 
+Therefore, I used the same covariates as I did in models for hookworms and for *Ascaris lumbricoides*. 
 
-I ran the parameter guesses six times until I reached a final model. The parameters are described in [TABLE REF]. I predicted the prevalence and the probability rasters for Trichuris trichuria using this model [FIGURE REF].
+```{r TT_glmer}
+
+glmer.fit.TT <- glmer(cbind(TT_positive, TT_examined-TT_positive) ~
+                         altitude + riv_dist + travel_w +
+                         (1|ID.location),
+                       data = sth,
+                       family = binomial)
+
+TT.glmer.sigma2 <- as.data.frame(summary(glmer.fit.TT)$varcor)[1,4]
+
+```
+
+The binomial generalised linear mixed-effects model also showed evidence of overdispersion for *Trichuris trichuria*, as the variance of the random effects was `r round(TT.glmer.sigma2, digits = 3)`. The variogram showed evidence of residual spatial correlation (figure 10).
+
+```{r TT.variogram_1, include = FALSE}
+variog.TT <- spat.corr.diagnostic(formula = TT_positive ~ 
+                       altitude + riv_dist + travel_w, 
+                     units.m = ~TT_examined,
+                     coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                     data = sth[complete.cases(sth),], 
+                     likelihood = "Binomial",
+                     uvec = seq(0, 500, length = 15), 
+                     n.sim = 10000,
+                     which.test = "variogram")
+
+
+```
+
+```{r TT.variogram_2, fig.cap="Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model."}
+
+TT.variog.df <- data.frame(
+  u = as.numeric(variog.TT$distance.bins),
+  v = as.numeric(variog.TT$obs.variogram),
+  v.upper = variog.TT$upper.lim,
+  v.lower = variog.TT$lower.lim)
+
+ggplot(TT.variog.df, aes(x = u))+
+  geom_ribbon(aes(ymin = v.lower, ymax = v.upper), fill = "skyblue1", alpha = 0.75)+
+  geom_line(aes(y = v))+
+  labs(x = "Spatial distance (km)", y = "Variogram")+
+  theme_light()
+
+```
+
+```{r TT.geostat.model, include=FALSE}
+
+par0.TT <- c(-3.3840984086, 0.0005154041, -0.0002321412, -0.0028610129,
+             1.5536212160, 173.6501762833, 0.9918892349)
+
+
+geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
+                                            altitude + riv_dist + travel_w,
+                                          units.m = ~Asc_examined,
+                                          coords = ~I(utm_x/1000)+I(utm_y/1000),
+                                          data = sth,
+                                          par0 = par0.Asc,
+                                          control.mcmc = mcml,
+                                          kappa = 0.5,
+                                          start.cov.pars = c(Asc.phi.guess,
+                                                             Asc.tau2.guess/Asc.sigma2.guess),
+                                          method = "nlminb")
+
+```
+
+I ran the parameter guesses six times until I reached a final model. The parameters are described in Table 5. I predicted the prevalence and the probability rasters for Trichuris trichuria using this model (Figure 11).
+
+
 
 [FIGURE]
 
