@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
 
 library(dplyr)
 library(ggplot2)
+library(cowplot)
 library(sf)
 library(raster)
 library(tmap)
@@ -70,6 +71,75 @@ I used previous research to decide which covariates to download [@alelignSoilTra
 Friction surface estimates the minutes required to travel one meter over land, producing a walking-only raster and a motorized vehicle raster. 
 Similarly, the time to nearest healthcare centre estimates the minutes required to reach said centre, both walking-only and with motorized vehicle. 
 I also downloaded a shapefile of all the rivers in Ethiopia which I used to create a raster of distance to the nearest river.  
+
+```{r covariates_figure, fig.cap= "Covariate rasters for Ethiopia. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes."}
+
+r1 <- ggplot()+
+  geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = altitude))+
+  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
+  geom_sf(data = ETH_adm0, col = "black", fill = NA)+
+  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  scale_fill_scico(palette = "bamako", name = "Altitude (m)")+
+  theme_void()+
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 7))
+
+r2 <- ggplot()+
+  geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = riv_dist))+
+  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
+  geom_sf(data = ETH_adm0, col = "black", fill = NA)+
+  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  scale_fill_scico(palette = "davos", name = "Distance (km)")+
+  theme_void()+
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 7))
+
+r3 <- ggplot()+
+  geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = fric_w))+
+  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
+  geom_sf(data = ETH_adm0, col = "black", fill = NA)+
+  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  scale_fill_scico(palette = "acton", name = "Minutes")+
+  theme_void()+
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 7))
+
+r4 <- ggplot()+
+  geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = fric_m))+
+  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
+  geom_sf(data = ETH_adm0, col = "black", fill = NA)+
+  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  scale_fill_scico(palette = "acton", name = "Minutes")+
+  theme_void()+
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 7))
+
+r5 <- ggplot()+
+  geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = travel_w))+
+  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
+  geom_sf(data = ETH_adm0, col = "black", fill = NA)+
+  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  scale_fill_scico(palette = "oslo", name = "Minutes")+
+  theme_void()+
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 7))
+
+r6 <- ggplot()+
+  geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = travel_m))+
+  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
+  geom_sf(data = ETH_adm0, col = "black", fill = NA)+
+  geom_sf(data = sth_sf, col = "white", size = 0.15)+
+  scale_fill_scico(palette = "oslo", name = "Minutes")+
+  theme_void()+
+  theme(legend.text = element_text(size = 5),
+        legend.title = element_text(size = 7))
+
+plot_grid(r1, r3, r5, r2, r4, r6,
+          labels = c("A", "C", "E", "B", "D", "F"),
+          align = "hv")
+
+```
+
 
 ## Data analysis 
 
