@@ -72,7 +72,7 @@ Friction surface estimates the minutes required to travel one meter over land, p
 Similarly, the time to nearest healthcare centre estimates the minutes required to reach said centre, both walking-only and with motorized vehicle. 
 I also downloaded a shapefile of all the rivers in Ethiopia which I used to create a raster of distance to the nearest river.  
 
-```{r covariates_figure, fig.cap= "Covariate rasters for Ethiopia. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes. White dots represent STH data collection points."}
+```{r covariates_figure, fig.cap= "Covariate rasters for Ethiopia. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes. White dots represent STH data collection points.", fig.height=26, fig.width=20}
 
 r1 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = altitude))+
@@ -99,7 +99,7 @@ r3 <- ggplot()+
   geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
-  scale_fill_scico(palette = "acton", name = "Minutes")+
+  scale_fill_scico(palette = "acton", name = "Time (min)")+
   theme_void()+
   theme(legend.text = element_text(size = 5),
         legend.title = element_text(size = 7))
@@ -109,7 +109,7 @@ r4 <- ggplot()+
   geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
-  scale_fill_scico(palette = "acton", name = "Minutes")+
+  scale_fill_scico(palette = "acton", name = "Time (min)")+
   theme_void()+
   theme(legend.text = element_text(size = 5),
         legend.title = element_text(size = 7))
@@ -119,7 +119,7 @@ r5 <- ggplot()+
   geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
-  scale_fill_scico(palette = "oslo", name = "Minutes")+
+  scale_fill_scico(palette = "oslo", name = "Time (min)")+
   theme_void()+
   theme(legend.text = element_text(size = 5),
         legend.title = element_text(size = 7))
@@ -129,7 +129,7 @@ r6 <- ggplot()+
   geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
-  scale_fill_scico(palette = "oslo", name = "Minutes")+
+  scale_fill_scico(palette = "oslo", name = "Time (min)")+
   theme_void()+
   theme(legend.text = element_text(size = 5),
         legend.title = element_text(size = 7))
@@ -212,7 +212,7 @@ I also created a fourth category to indicate areas where confidence was too low 
 
 There were a total of 146 unique data collection locations across Ethiopia (Figure 2). The data collection occurred across a number of years, at varying rates, as described in Table 1. Due to lack of multiple rasters representing the change in time, this temporal change was not accounted for in any further analyses. 
 
-```{r STH_locations, fig.cap= "STH data collection locations."}
+```{r STH_locations, fig.cap= "STH data collection locations.", fig.height=10}
 
 ggplot()+
   geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.15)+
@@ -222,14 +222,60 @@ ggplot()+
 
 ```
 
- 
-[ TABLE ]
+```{r STH_years_table, results='markup'}
 
-Hookworms 
+table.1 <- sth %>%
+  count(Year)
 
-I performed a logit transformation on the hookworm data to determine the association with each of the covariates [FIGURE REF].
+knitr::kable(table.1, col.names = c("Year", "Number of surveys"),
+             caption = "Number of STH surveys performed by year.")
+  
 
-[FIGURE]
+```
+
+## Hookworms 
+
+I performed a logit transformation on the hookworm data to determine the association with each of the covariates (Figure 3).
+
+```{r e.logit_plots}
+
+sth$HK_e.logit <- log((sth$HK_positive+0.5)/(sth$HK_examined-sth$HK_positive+0.5))
+sth$Asc_e.logit <- log((sth$Asc_positive+0.5)/(sth$Asc_examined-sth$Asc_positive+0.5))
+sth$TT_e.logit <- log((sth$TT_positive+0.5)/(sth$TT_examined-sth$TT_positive+0.5))
+
+species <- c("HK", "Asc", "TT")
+vars <- names(sth)[c(18:23)]
+vars_labels <- c("Altitude (m)", "Distance (km)", "Time (min)",
+                 "Time (min)",
+                 "Time (min)",
+                 "Time (min)")
+
+plot.list <- list()
+
+for (i in 1:length(species)) {
+  
+  for (j in 1:length(vars)) {
+    
+    plot.list[[species[i]]][[vars[j]]] <-
+      ggplot(sth, aes_string(x = vars[j],
+                             y = paste0(species[i], "_e.logit")))+
+      geom_point()+
+      labs(x = vars_labels[j], y = "Empirical logit")
+    
+  }
+  
+}
+
+```
+
+```{r HK_e.logit, fig.cap="Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
+
+plot_grid(plot.list$HK$altitude, plot.list$HK$fric_w,plot.list$HK$travel_w,
+          plot.list$HK$riv_dist,plot.list$HK$fric_m, plot.list$HK$travel_m,
+          labels = c("A", "C", "E", "B", "D", "F"),
+          align = "hv")
+
+```
 
  
 Focusing on altitude, most of the data points are located in the middle of the range, with a few points on either side. There does appear to be a linear relationship present, with the empirical logit increasing as altitude increases. With distance to river, there is a high density of points located in the lower end of the range. The friction variables and the travel variables show very similar relationships. Most of the data points are located on the lower end of the scales. The walking travel time to nearest healthcare centre has the lowest density, with the points more spread out across the range. 

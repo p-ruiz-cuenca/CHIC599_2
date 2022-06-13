@@ -42,6 +42,16 @@
   pdfcreator={LaTeX via pandoc}}
 \urlstyle{same} % disable monospaced font for URLs
 \usepackage[margin=1in]{geometry}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
 \usepackage{graphicx}
 \makeatletter
 \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
@@ -151,15 +161,30 @@ reliable location recorded and were of sufficient quality.
 
 I used previous research to decide which covariates to download
 {[}\protect\hyperlink{ref-alelignSoilTransmittedHelminthInfections2015}{5}--\protect\hyperlink{ref-eyayuPrevalenceIntensityInfection2022}{7}{]}.
-These included elevation, sourced from DIVA GIS {[}REF{]}, friction
-surface and time to nearest healthcare centre, downloaded from the
-Malaria Atlas Project {[} REF {]} {[}FIGURE REF {]}. Friction surface
-estimates the minutes required to travel one meter over land, producing
-a walking-only raster and a motorized vehicle raster. Similarly, the
-time to nearest healthcare centre estimates the minutes required to
-reach said centre, both walking-only and with motorized vehicle. I also
-downloaded a shapefile of all the rivers in Ethiopia which I used to
-create a raster of distance to the nearest river.
+These included elevation, sourced from
+\href{https://www.diva-gis.org/}{DIVA GIS}
+{[}\protect\hyperlink{ref-DIVAGISFreeSimple}{8}{]}, friction surface and
+time to nearest healthcare centre, downloaded from the
+\href{https://malariaatlas.org/}{Malaria Atlas Project}
+{[}\protect\hyperlink{ref-MalariaAtlasProject}{9}{]} (Figure 1).
+Friction surface estimates the minutes required to travel one meter over
+land, producing a walking-only raster and a motorized vehicle raster.
+Similarly, the time to nearest healthcare centre estimates the minutes
+required to reach said centre, both walking-only and with motorized
+vehicle. I also downloaded a shapefile of all the rivers in Ethiopia
+which I used to create a raster of distance to the nearest river.
+
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/covariates_figure-1.pdf}
+\caption{Covariate rasters for Ethiopia. A: Altitude, in meters. B:
+Distance to nearest river, in kilometers. C: Friction surface walking
+only, in minutes required to travel one meter. D: Friction surface
+motorized vehicle, same units as C. E: Walking only travel time to
+nearest healthcare centre, in minutes. F: Motorized vehicle travel time
+to nearest healthcare centre, in minutes. White dots represent STH data
+collection points.}
+\end{figure}
 
 \hypertarget{data-analysis}{%
 \subsection{Data analysis}\label{data-analysis}}
@@ -241,7 +266,8 @@ I performed the inference explained above using Markov Chain Monte Carlo
 results and only keeping every 8\^{}th result thereafter. This resulted
 in 1,000 samples per location.
 
-Prediction
+\hypertarget{prediction}{%
+\subsection{Prediction}\label{prediction}}
 
 To create a predicted prevalence raster for Ethiopia, I made a grid of
 points across the entire country, at a resolution of 10 km. I extracted
@@ -278,19 +304,46 @@ and would therefore need further investigations.
 \subsection{ESPEN data}\label{espen-data}}
 
 There were a total of 146 unique data collection locations across
-Ethiopia {[}FIGURE REF{]}. The data collection occurred across a number
-of years, at varying rates, as described in Table 1. Due to lack of
+Ethiopia (Figure 2). The data collection occurred across a number of
+years, at varying rates, as described in Table 1. Due to lack of
 multiple rasters representing the change in time, this temporal change
 was not accounted for in any further analyses.
 
-{[} TABLE {]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/STH_locations-1.pdf}
+\caption{STH data collection locations.}
+\end{figure}
 
-Hookworms
+\begin{longtable}[]{@{}rr@{}}
+\caption{Number of STH surveys performed by year.}\tabularnewline
+\toprule
+Year & Number of surveys \\
+\midrule
+\endfirsthead
+\toprule
+Year & Number of surveys \\
+\midrule
+\endhead
+2001 & 1 \\
+2003 & 1 \\
+2005 & 60 \\
+2008 & 1 \\
+2009 & 102 \\
+2010 & 2 \\
+2011 & 1 \\
+2012 & 3 \\
+2013 & 7 \\
+2014 & 1 \\
+2015 & 2 \\
+\bottomrule
+\end{longtable}
+
+\hypertarget{hookworms}{%
+\subsection{Hookworms}\label{hookworms}}
 
 I performed a logit transformation on the hookworm data to determine the
-association with each of the covariates {[}FIGURE REF{]}.
-
-{[}FIGURE{]}
+association with each of the covariates (Figure 3).
 
 Focusing on altitude, most of the data points are located in the middle
 of the range, with a few points on either side. There does appear to be
@@ -487,6 +540,13 @@ intensity of infection and associated risk factors of soil-transmitted
 helminth infections among school children at {Tachgayint} woreda,
 {Northcentral Ethiopia}}. PLOS ONE. {Public Library of Science};
 2022;17:e0266333.
+
+\leavevmode\vadjust pre{\hypertarget{ref-DIVAGISFreeSimple}{}}%
+8. {DIVA-GIS} \textbar{} free, simple \& effective.
+https://www.diva-gis.org/;
+
+\leavevmode\vadjust pre{\hypertarget{ref-MalariaAtlasProject}{}}%
+9. The {Malaria Atlas Project}. MAP. https://malariaatlas.org/;
 
 \end{CSLReferences}
 
