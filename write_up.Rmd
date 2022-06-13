@@ -37,6 +37,14 @@ ETH_adm0 <- st_transform(ETH_adm0, crs = 32638)
 ETH_adm1 <- st_read("ETH_files/ETH_adm/ETH_adm1.shp")
 ETH_adm1 <- st_transform(ETH_adm1, crs = 32638)
 
+mcml <- control.mcmc.MCML(n.sim=10000, # number of simulations
+                          burnin=2000, # the amount of samples to throw away
+                          # the first simulations are not representative
+                          # so these are thrown away
+                          # 2000 is the minimum to throw away
+                          thin=8) # Only retain every nth sample
+
+
 ```
 
 ## Introduction 
@@ -339,27 +347,175 @@ ggplot(HK.variog.df, aes(x = u))+
 
 ```
 
+```{r HK.geostat.model, include=FALSE}
 
-I followed by building a binomial geostatistical model, as described in the methods section. I performed four rounds of using guesses for the model parameters before arriving to a final model. The final parameters are described in Table XXX. Using this model, I created three rasters: one showing the predicted prevalence of hookworms across Ethiopia, one showing the probability of having between 20% and 50% prevalence and the final one showing the probability of exceeding 50% prevalence [ FIGURE REF]. 
+par0.HK <- c(-3.2500755516, -0.0001313163, 0.0331892189, 32.3256263836,
+             3.1795564677, 77.0774275358, 1.1766335110)
 
-[Figure]
+geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
+                                           altitude + riv_dist + fric_w,
+                                         units.m = ~ HK_examined,
+                                         coords = ~I(utm_x/1000)+I(utm_y/1000),
+                                         data = sth,
+                                         par0 = par0.HK,
+                                         control.mcmc = mcml,
+                                         kappa = 0.5,
+                                         start.cov.pars = c(HK.phi.guess,
+                                                            HK.tau2.guess/HK.sigma2.guess),
+                                         method = "nlminb")
 
-The predicted prevalence shows a pocket of high prevalence of hookworm in the eastern region of Ethiopia. This area does overlap with a high probability of exceeding 50% prevalence. However, there is low probability of having between 20% and 50% prevalence across the entire country. 
+```
 
 
-Ascaris lumbricoides 
+I followed by building a binomial geostatistical model, as described in the methods section. 
+I performed four rounds of using guesses for the model parameters before arriving to a final model. 
+The final parameters are described in Table 2. 
 
-The associations between each covariate and the logit transformation for the Ascaris lumbricoides data is plotted in [FIGURE REF]. 
+```{r HK.geostat.params, results='markup'}
 
-[FIGURE] 
+HK.geostat.params.df <- as.data.frame(summary(geostat.fit.HK,
+                                           log.cov.pars=FALSE)$cov.pars)
 
-All the associations are very similar to those seen for the hookworm logit transformation. Both altitude and distance to nearest river show less concentration of data points across the ranges, but this does not seem to affect the associations with the logit data. As with hookworms, the travel and friction data show a high density of data points on the lower end of the range. I decided to include the same covariates as for hookworm: altitude, distance to nearest river and walking travel time to closest healthcare centre. 
+rownames(HK.geostat.params.df) <- c("$\\sigma^2$",
+                                 "$\\phi$",
+                                 "$\\tau^2$")
 
-The binomial generalised linear mixed-effects model showed evidence of overdispersion, as the variance of the random effects was [INSERT VALUE]. The variogram for this model also showed the presence of residual spatial correlation [ FIGURE REF]. 
+knitr::kable(HK.geostat.params.df, "pipe", digits = 3,
+             caption = "Estimated parameters from binomial geostatistical model")
 
-[ FIGURE variogram ]
 
-I performed four rounds of parameter guessing before reaching a final binomial geostatistical model. These are described in [TABLE REF]. I used this model to create the same three rasters as I did for hookworms: predicted prevalence, probability of having between 20% and 50% prevalence and probability of exceeding 50% prevalence [Figure REF]. 
+```
+
+
+Using this model, I created three rasters: one showing the predicted prevalence of hookworms across Ethiopia, one showing the probability of having between 20% and 50% prevalence and the final one showing the probability of exceeding 50% prevalence (Figure 5). 
+
+```{r HK.prediction.rasters, fig.cap="Rasters for Hookworm estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
+
+ETH_grid$HK.prev.mean <- ETH_grid$HK.prev.mean*100
+
+HK.1 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.prev.mean))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "batlow", limits = c(0, 100),
+                   name = "Prevalence")+
+  theme_void()
+
+HK.2 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.between.20_50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+HK.3 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.exceed50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+plot_grid(HK.1, HK.2, HK.3, 
+          labels = "AUTO", align = "hv",
+          nrow = 1)
+
+```
+
+
+The predicted prevalence shows a pocket of high prevalence of hookworm in the eastern region of Ethiopia. 
+This area does overlap with a high probability of exceeding 50% prevalence. 
+However, there is low probability of having between 20% and 50% prevalence across the entire country. 
+
+
+## *Ascaris lumbricoides* 
+
+The associations between each covariate and the logit transformation for the Ascaris lumbricoides data is plotted in Figure 6. 
+
+```{r Asc_e.logit, fig.cap="Covariates against empirical logit transformation of Ascaris lumbricoides data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
+
+plot_grid(plot.list$Asc$altitude, plot.list$Asc$riv_dist,
+          plot.list$Asc$fric_w,plot.list$Asc$fric_m,
+          plot.list$Asc$travel_w, plot.list$Asc$travel_m,
+          labels = "AUTO",
+          align = "hv",
+          nrow = 3, ncol = 2)
+
+```
+
+All the associations are very similar to those seen for the hookworm logit transformation. 
+Both altitude and distance to nearest river show less concentration of data points across the ranges, but this does not seem to affect the associations with the logit data. 
+As with hookworms, the travel and friction data show a high density of data points on the lower end of the range. 
+I decided to include the same covariates as for hookworm: altitude, distance to nearest river and walking travel time to closest healthcare centre. 
+
+```{r Asc_glmer}
+
+glmer.fit.Asc <- glmer(cbind(Asc_positive, Asc_examined-Asc_positive) ~
+                         altitude + riv_dist + travel_w +
+                         (1|ID.location),
+                       data = sth,
+                       family = binomial)
+
+Asc.glmer.sigma2 <- as.data.frame(summary(glmer.fit.Asc)$varcor)[1,4]
+
+```
+
+The binomial generalised linear mixed-effects model showed evidence of overdispersion, as the variance of the random effects was `r round(Asc.glmer.sigma2, digits = 3)`. The variogram for this model also showed the presence of residual spatial correlation (Figure 7). 
+
+```{r Asc.variogram_1, include = FALSE}
+variog.Asc <- spat.corr.diagnostic(formula = Asc_positive ~ 
+                       altitude + riv_dist + travel_w, 
+                     units.m = ~Asc_examined,
+                     coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                     data = sth[complete.cases(sth),], 
+                     likelihood = "Binomial",
+                     uvec = seq(0, 500, length = 15), 
+                     n.sim = 10000,
+                     which.test = "variogram")
+
+
+```
+
+```{r Asc.variogram_2, fig.cap="Variogram of Ascaris lumbricoides data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model."}
+
+Asc.variog.df <- data.frame(
+  u = as.numeric(variog.Asc$distance.bins),
+  v = as.numeric(variog.Asc$obs.variogram),
+  v.upper = variog.Asc$upper.lim,
+  v.lower = variog.Asc$lower.lim)
+
+ggplot(Asc.variog.df, aes(x = u))+
+  geom_ribbon(aes(ymin = v.lower, ymax = v.upper), fill = "skyblue1", alpha = 0.75)+
+  geom_line(aes(y = v))+
+  labs(x = "Spatial distance (km)", y = "Variogram")+
+  theme_light()
+
+```
+
+```{r Asc.geostat.model, include=FALSE}
+
+par0.Asc <- c(-3.3840984086, 0.0005154041, -0.0002321412, -0.0028610129,
+             1.5536212160, 173.6501762833, 0.9918892349)
+
+
+geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
+                                            altitude + riv_dist + travel_w,
+                                          units.m = ~Asc_examined,
+                                          coords = ~I(utm_x/1000)+I(utm_y/1000),
+                                          data = sth,
+                                          par0 = par0.Asc,
+                                          control.mcmc = mcml,
+                                          kappa = 0.5,
+                                          start.cov.pars = c(Asc.phi.guess,
+                                                             Asc.tau2.guess/Asc.sigma2.guess),
+                                          method = "nlminb")
+
+```
+
+I performed four rounds of parameter guessing before reaching a final binomial geostatistical model.
+These are described in [TABLE REF].
+I used this model to create the same three rasters as I did for hookworms: predicted prevalence, probability of having between 20% and 50% prevalence and probability of exceeding 50% prevalence [Figure REF]. 
 
 [Figure]
 
