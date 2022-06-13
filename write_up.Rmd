@@ -1,0 +1,224 @@
+---
+title: "CHIC599 Project 2"
+author: '36075596'
+date: "`r Sys.Date()`"
+output: 
+pdf_document:
+    keep_tex: true
+bibliography: references.bib
+csl: "malaria-journal.csl"
+link-citations: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE,
+                      results = 'hide', error = FALSE)
+
+library(dplyr)
+library(ggplot2)
+library(sf)
+library(raster)
+library(tmap)
+library(lme4)
+library(PrevMap)
+library(scico)
+
+sth <- read.csv("data/ETH_sth.csv")
+sth$Asc_examined <- as.numeric(sth$Asc_examined)
+sth_sf <- st_as_sf(sth, coords = c("utm_x", "utm_y"))
+st_crs(sth_sf) <- 32638
+
+ETH_grid <- read.csv("data/ETH_grid.csv")
+
+ETH_adm0 <- st_read("ETH_files/ETH_adm/ETH_adm0.shp")
+ETH_adm0 <- st_transform(ETH_adm0, crs = 32638)
+
+ETH_adm1 <- st_read("ETH_files/ETH_adm/ETH_adm1.shp")
+ETH_adm1 <- st_transform(ETH_adm1, crs = 32638)
+
+```
+
+## Introduction 
+
+Soil-transmitted helminthiases (STH) represents the highest burden of disease for all neglected tropical diseases (NTD’s) across the world [@worldhealthorganizationEliminatingSoiltransmittedHelminthiases2012]. 
+The disease is caused mainly by three types of helminths: hookworms (*Necator americanus* and *Ancylostoma duodenale*), *Ascaris lumbricoides* and *Trichuris trichuria*.
+Although they do not have high mortality rates, infections can have significant impacts on health and quality of life.
+They are associated with stunted growth, reduced cognitive development and micro-nutrient deficiency.
+These effects are particularly concerning in school-age children and pregnant women. 
+
+In Ethiopia, STH is a major public health concern, affecting over 79 million individuals [@sartoriusPrevalenceIntensitySoiltransmitted2021; @aemiroPrevalenceSoilTransmittedHelminthes2022].
+Following guidance from the World Health Organization (WHO), the Ethiopian government launched a mass drug administration (MDA) project in 2015.
+WHO recommends different MDA frequencies depending on the prevalence of STH [@worldhealthorganizationEliminatingSoiltransmittedHelminthiases2012].
+If prevalence is over 50%, MDAs should take place twice a year.
+If prevalence is between 20% and 50%, MDA should happen once a year.
+Any areas where prevalence is under 20% should change strategies and focus on a case-by-case treatment schedule. 
+
+In this project, I used open-access data to predict the prevalence of any STH across Ethiopia.
+I also produced probabilities of exceeding 50% prevalence and of falling between 20% and 50% prevalence.
+Using these maps, I created discrete rasters identifying areas that required treatment twice a year, areas that required treatment once a year, areas that should move to a case-by-case strategy and areas for which the uncertainty was too high to determine in which category they fell and therefore would require further data collection. 
+
+# Methods 
+
+## Data sources 
+
+I downloaded STH data for Ethiopia from the Expanded Special Project to Eliminate NTDs (ESPEN), a project set up by the WHO African Regional Office to support national NTD control projects [@ESPENExpandedSpecial].
+The data set contained geo-referrenced school surveys carried out across the country, including the number of children examined and the number of children that tested positive for each of the three STH groups (hookworms, *Ascaris lumbricoides* and *Trichuris trichuria*). 
+Each entry had a geo-reliability and quality classification, referring to the reliability of the recorded latitude and longitude and the quality of the data. 
+In my analyses, I only included those entries that had a reliable location recorded and were of sufficient quality. 
+
+I used previous research to decide which covariates to download [@alelignSoilTransmittedHelminthInfections2015; @anegagrieEnvironmentalCharacteristicsHousehold2021; @eyayuPrevalenceIntensityInfection2022]. These included elevation, sourced from DIVA GIS [REF], friction surface and time to nearest healthcare centre, downloaded from the Malaria Atlas Project [ REF ] [FIGURE REF ].
+Friction surface estimates the minutes required to travel one meter over land, producing a walking-only raster and a motorized vehicle raster. 
+Similarly, the time to nearest healthcare centre estimates the minutes required to reach said centre, both walking-only and with motorized vehicle. 
+I also downloaded a shapefile of all the rivers in Ethiopia which I used to create a raster of distance to the nearest river.  
+
+## Data analysis 
+
+I started the data analysis by assessing how each covariate was related to the dependant variable. 
+I created a logit transformation using each of the three STH species’ data, as defined in the equation below. 
+I used this against each covariate to see how--or if--covariates should be introduced into the final models. 
+
+$$ \text{logit} = \log\left(\frac{y+0.5}{n-y+0.5}\right) $$
+
+
+Once I had determined the relationship between the covariates and each of the STH species logit transformation, I proceeded to build binomial generalised linear mixed-effects models.
+I created one model for each species, as defined by the equation below.
+
+$$ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + Z_i $$
+
+Where:
+
+- $x_i^\intercal\beta$ holds the intercept and any covariates included in the model. I selected the covariates by assessing associations with the logit transformation
+- $Z_i$ represents the random effects for each location $i$, assumed to be normally distributed and independant, identical distributions, such that 
+
+$$ Z_i \sim N(0, \sigma^2)  $$
+
+I assessed if there was overdispersion present by extracting the variance of the random effects ($\sigma^2$). Using a variogram, I checked if there was residual spatial correlation that remained unaccounted for by the generalised linear mixed-effects models. 
+
+I carried on analysing the data by building a binomial geostatistical model. This model is defined by the equation below. 
+
+$$ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + S(x_i) + Z_i $$
+
+Where: 
+
+- $x_i^\intercal\beta$ represents the covariates for each location $i$ and the intercept
+- $S(x)$ denotes the spatial Gaussian process, with assumed stationarity and isotropy
+- $Z_i$ is the nugget effect, a normally distributed random variable representing non-spatial variation, small-scale spatial variation or measurement error
+
+
+As this is a binomial geostatistical model, it requires initial guesses to be given for the unknown parameters.
+The unknown parameters are: $\beta$, the coefficients of the covariates (including the intercept);
+$\sigma^2$, the variance of the spatial Gaussian process;
+$\phi$, the scale of the spatial correlation;
+and $\tau^2$, the variance of the nugget.
+I used the coefficients of the covariates from a generalized linear model, which had the same covariates as those included in the binomial geostatistical model, as the initial guesses for $\beta$.
+I produced the guesses for $\sigma^2$, $\phi$ and $\tau^2$ by using the empirical variogram and fitting a weighted least-squares estimate line through it, producing a set a values that would create this line.
+I then extracted the values for each of the parameters from the geostatistical model and used them as guesses for the same model.
+I repeated this until the values of the parameters stabilised. 
+
+I performed the inference explained above using Markov Chain Monte Carlo (MCMC) methods.
+I ran 10,000 simulations, discarding the first 2,000 results and only keeping every 8^th result thereafter.
+This resulted in 1,000 samples per location. 
+
+Prediction 
+
+To create a predicted prevalence raster for Ethiopia, I made a grid of points across the entire country, at a resolution of 10 km.
+I extracted the values for each of the covariates at each of these points and saved them as a data frame.
+I used this data frame to predict the prevalence of each of the STH species at every grid point, using the same MCMC methods described previously. 
+
+To create a raster of the prevalence of at least one STH species, I extracted the MCMC samples for each of the species.
+I then used this to, firstly, estimate the “anti-prevalence” of each species and, secondly, combine these to estimate the prevalence of at least one species.
+This is described in the equation below.
+
+$$ P(S_1 \vee S_2 \vee S_3) = 1 - P(\bar{S_1} \wedge \bar{S_2} \wedge \bar{S_3}) $$
+
+I used these samples of at least one species to create two probability rasters: one showing the probability of exceeding 50% prevalence and a second showing the probability of having between 20% and 50% prevalence.
+I combined these rasters to create maps to show what areas needed different strategies, at three different confidence levels: 90% confidence, 75% confidence and 60% confidence. 
+The strategies referred to the recommendations set out by the WHO, where MDAs should happen twice a year for areas with over 50% prevalence of STH, once a year for areas with prevalence between 20% and 50% and strategies should move to a case-by-case basis in areas where prevalence was below 20%. 
+I also created a fourth category to indicate areas where confidence was too low and would therefore need further investigations. 
+
+# Results 
+
+## ESPEN data 
+
+There were a total of 146 unique data collection locations across Ethiopia [FIGURE REF]. The data collection occurred across a number of years, at varying rates, as described in Table 1. Due to lack of multiple rasters representing the change in time, this temporal change was not accounted for in any further analyses. 
+ 
+[ TABLE ]
+
+Hookworms 
+
+I performed a logit transformation on the hookworm data to determine the association with each of the covariates [FIGURE REF].
+
+[FIGURE]
+
+ 
+Focusing on altitude, most of the data points are located in the middle of the range, with a few points on either side. There does appear to be a linear relationship present, with the empirical logit increasing as altitude increases. With distance to river, there is a high density of points located in the lower end of the range. The friction variables and the travel variables show very similar relationships. Most of the data points are located on the lower end of the scales. The walking travel time to nearest healthcare centre has the lowest density, with the points more spread out across the range. 
+
+Informed by these plots, I decided to include altitude, distance to river and walking travel time to nearest health care centre in further models. I only included one of the friction and travel variables due to risks of introducing multi-collinearity. 
+
+I used these variables, without performing any transformations on them, to build a binomial generalised linear mixed-effects model, as defined in the methods section. The variance of the random effects was [INSERT VALUE], showing evidence of overdispersion. The variogram for this model also showed residual spatial correlation [FIGURE REF]. 
+
+[FIGURE Variogram]
+
+I followed by building a binomial geostatistical model, as described in the methods section. I performed four rounds of using guesses for the model parameters before arriving to a final model. The final parameters are described in Table XXX. Using this model, I created three rasters: one showing the predicted prevalence of hookworms across Ethiopia, one showing the probability of having between 20% and 50% prevalence and the final one showing the probability of exceeding 50% prevalence [ FIGURE REF]. 
+
+[Figure]
+
+The predicted prevalence shows a pocket of high prevalence of hookworm in the eastern region of Ethiopia. This area does overlap with a high probability of exceeding 50% prevalence. However, there is low probability of having between 20% and 50% prevalence across the entire country. 
+
+
+Ascaris lumbricoides 
+
+The associations between each covariate and the logit transformation for the Ascaris lumbricoides data is plotted in [FIGURE REF]. 
+
+[FIGURE] 
+
+All the associations are very similar to those seen for the hookworm logit transformation. Both altitude and distance to nearest river show less concentration of data points across the ranges, but this does not seem to affect the associations with the logit data. As with hookworms, the travel and friction data show a high density of data points on the lower end of the range. I decided to include the same covariates as for hookworm: altitude, distance to nearest river and walking travel time to closest healthcare centre. 
+
+The binomial generalised linear mixed-effects model showed evidence of overdispersion, as the variance of the random effects was [INSERT VALUE]. The variogram for this model also showed the presence of residual spatial correlation [ FIGURE REF]. 
+
+[ FIGURE variogram ]
+
+I performed four rounds of parameter guessing before reaching a final binomial geostatistical model. These are described in [TABLE REF]. I used this model to create the same three rasters as I did for hookworms: predicted prevalence, probability of having between 20% and 50% prevalence and probability of exceeding 50% prevalence [Figure REF]. 
+
+[Figure]
+
+These maps show that the prevalence for Ascaris lumbricoides across Ethiopia is very low. 
+
+Trichuris trichuria 
+
+I plotted the logit transformed Trichuris trichuria data against each of the covariates [FIGURE ref]. 
+
+[ FIGURE ]
+
+The only notable difference of the Trichuris trichuria logit data is that when plotting it against the distance to river it seems to be more spread out than the data points for hookworms and Ascaris lumbricoides. All other associations are very similar. Therefore, I used the same covariates as I did in models for hookworms and for Ascaris lumbricoides. 
+
+The binomial generalised linear mixed-effects model also showed evidence of overdispersion for Trichuris trichuria, as the variance of the random effects was [INSERT VALUE]. The variogram showed evidence of residual spatial correlation. [ FIGURE ]
+
+[FIGURE variogram ] 
+
+I ran the parameter guesses six times until I reached a final model. The parameters are described in [TABLE REF]. I predicted the prevalence and the probability rasters for Trichuris trichuria using this model [FIGURE REF].
+
+[FIGURE]
+
+These maps show that, overall, there is very low prevalence of Trichuris trichuria across Ethiopia. The only exception is a small area in the eastern region of Ethiopia, where prevalence appears to be extremely high. 
+
+Any STH species 
+
+As described in the methods section, I combined the estimated prevalences of the three STH species to create an estimated prevalence of any STH species. I used this estimate to create 3 rasters: one showing the estimated prevalence, one showing the probability of having between 20% and 50% prevalence and a third showing the probability of exceeding 50% prevalence [FIGURE REF]. 
+
+[FIGURE]
+
+These maps show that, as described above, there is an area in the eastern region of Ethiopia that does have high prevalence for any STH species.
+
+I combined these estimates to create a discrete raster, identifying what strategy should be used in which area. I created these with three levels of confidence [FIGURE REF].
+
+[FIGURE]
+
+ These maps show that, depending on the level of confidence, different areas would require different interventions. 
+
+Conclusion 
+
+In this report, I used geostatistical methods to produce an estimate of STH prevalence across Ethiopia. I used this estimate to create maps identifying which areas required which control strategy, depending on the level of confidence needed. 
+
+These maps showed that, overall, more data would be better to create a more informative estimate. However, given that getting more and better quality data consumes resources, other avenues can be explored. By considering the temporal change of both the STH data and the covariates, I could have created a better estimate of the prevalence. 
+
