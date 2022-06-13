@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.26)  13 JUN 2022 14:14
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex 2022.5.26)  13 JUN 2022 15:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -568,12 +568,12 @@ on input line 314.
 
 LaTeX Warning: Float too large for page by 23.94943pt on input line 316.
 
-<write_up_files/figure-latex/HK_e.logit-1.pdf, id=87, 469.755pt x 325.215pt>
+<write_up_files/figure-latex/HK_e.logit-1.pdf, id=87, 1445.4pt x 939.51pt>
 File: write_up_files/figure-latex/HK_e.logit-1.pdf Graphic file (type pdf)
 <use write_up_files/figure-latex/HK_e.logit-1.pdf>
 Package pdftex.def Info: write_up_files/figure-latex/HK_e.logit-1.pdf  used on 
-input line 349.
-(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+input line 350.
+(pdftex.def)             Requested size: 469.74944pt x 305.33713pt.
 [4] [5 <./write_up_files/figure-latex/STH_locations-1.pdf>] [6 <./write_up_file
 s/figure-latex/HK_e.logit-1.pdf>]
 <write_up_files/figure-latex/HK.variogram_2-1.pdf, id=119, 469.755pt x 325.215p
@@ -581,45 +581,121 @@ t>
 File: write_up_files/figure-latex/HK.variogram_2-1.pdf Graphic file (type pdf)
 <use write_up_files/figure-latex/HK.variogram_2-1.pdf>
 Package pdftex.def Info: write_up_files/figure-latex/HK.variogram_2-1.pdf  used
- on input line 375.
+ on input line 383.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[7 <./write_up_files/figure-latex/HK.variogram_2-1.pdf>] [8] [9]
-Overfull \hbox (0.8796pt too wide) in paragraph at lines 532--535
+[7 <./write_up_files/figure-latex/HK.variogram_2-1.pdf>]
+<write_up_files/figure-latex/HK.prediction.rasters-1.pdf, id=135, 469.755pt x 3
+25.215pt>
+File: write_up_files/figure-latex/HK.prediction.rasters-1.pdf Graphic file (typ
+e pdf)
+<use write_up_files/figure-latex/HK.prediction.rasters-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/HK.prediction.rasters-1.pd
+f  used on input line 418.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<write_up_files/figure-latex/Asc_e.logit-1.pdf, id=136, 1445.4pt x 939.51pt>
+File: write_up_files/figure-latex/Asc_e.logit-1.pdf Graphic file (type pdf)
+<use write_up_files/figure-latex/Asc_e.logit-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/Asc_e.logit-1.pdf  used on
+ input line 439.
+(pdftex.def)             Requested size: 469.74944pt x 305.33713pt.
+<write_up_files/figure-latex/Asc.variogram_2-1.pdf, id=137, 469.755pt x 325.215
+pt>
+File: write_up_files/figure-latex/Asc.variogram_2-1.pdf Graphic file (type pdf)
+
+<use write_up_files/figure-latex/Asc.variogram_2-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/Asc.variogram_2-1.pdf  use
+d on input line 465.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[8 <./write_up_files/figure-latex/HK.prediction.rasters-1.pdf>] [9 <./write_up_
+files/figure-latex/Asc_e.logit-1.pdf>] [10 <./write_up_files/figure-latex/Asc.v
+ariogram_2-1.pdf>]
+<write_up_files/figure-latex/Asc.prediction.rasters-1.pdf, id=188, 469.755pt x 
+325.215pt>
+File: write_up_files/figure-latex/Asc.prediction.rasters-1.pdf Graphic file (ty
+pe pdf)
+<use write_up_files/figure-latex/Asc.prediction.rasters-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/Asc.prediction.rasters-1.p
+df  used on input line 497.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<write_up_files/figure-latex/TT_e.logit-1.pdf, id=189, 1445.4pt x 939.51pt>
+File: write_up_files/figure-latex/TT_e.logit-1.pdf Graphic file (type pdf)
+<use write_up_files/figure-latex/TT_e.logit-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/TT_e.logit-1.pdf  used on 
+input line 515.
+(pdftex.def)             Requested size: 469.74944pt x 305.33713pt.
+[11 <./write_up_files/figure-latex/Asc.prediction.rasters-1.pdf>] [12 <./write_
+up_files/figure-latex/TT_e.logit-1.pdf>]
+<write_up_files/figure-latex/TT.variogram_2-1.pdf, id=224, 469.755pt x 325.215p
+t>
+File: write_up_files/figure-latex/TT.variogram_2-1.pdf Graphic file (type pdf)
+<use write_up_files/figure-latex/TT.variogram_2-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/TT.variogram_2-1.pdf  used
+ on input line 539.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<write_up_files/figure-latex/TT.prediction.rasters-1.pdf, id=225, 469.755pt x 3
+25.215pt>
+File: write_up_files/figure-latex/TT.prediction.rasters-1.pdf Graphic file (typ
+e pdf)
+<use write_up_files/figure-latex/TT.prediction.rasters-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/TT.prediction.rasters-1.pd
+f  used on input line 569.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[13 <./write_up_files/figure-latex/TT.variogram_2-1.pdf>] [14 <./write_up_files
+/figure-latex/TT.prediction.rasters-1.pdf>]
+<write_up_files/figure-latex/any.sth.prediction.rasters-1.pdf, id=264, 469.755p
+t x 325.215pt>
+File: write_up_files/figure-latex/any.sth.prediction.rasters-1.pdf Graphic file
+ (type pdf)
+<use write_up_files/figure-latex/any.sth.prediction.rasters-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/any.sth.prediction.rasters
+-1.pdf  used on input line 592.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+<write_up_files/figure-latex/discrete.rasters-1.pdf, id=265, 469.755pt x 325.21
+5pt>
+File: write_up_files/figure-latex/discrete.rasters-1.pdf Graphic file (type pdf
+)
+<use write_up_files/figure-latex/discrete.rasters-1.pdf>
+Package pdftex.def Info: write_up_files/figure-latex/discrete.rasters-1.pdf  us
+ed on input line 608.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[15 <./write_up_files/figure-latex/any.sth.prediction.rasters-1.pdf>] [16 <./wr
+ite_up_files/figure-latex/discrete.rasters-1.pdf>]
+Overfull \hbox (0.8796pt too wide) in paragraph at lines 659--662
 []\T1/lmr/m/n/10 (-20) 4. ES-PEN | Ex-panded Spe-cial Project for Elim-i-na-tio
 n Ne-glected Trop-i-cal Dis-eases. https://espen.afro.who.int/; 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 569.
-[10]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 569.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 696.
+[17]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 696.
 (./write_up.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 569.
-Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 569.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 696.
+Package atveryend Info: Empty hook `AtEndAfterFileList' on input line 696.
  ) 
 Here is how much of TeX's memory you used:
- 13350 strings out of 483183
- 195033 string characters out of 5966292
- 477241 words of memory out of 5000000
- 28006 multiletter control sequences out of 15000+600000
- 589042 words of font info for 109 fonts, out of 8000000 for 9000
+ 13447 strings out of 483183
+ 198357 string characters out of 5966292
+ 477176 words of memory out of 5000000
+ 28062 multiletter control sequences out of 15000+600000
+ 593703 words of font info for 113 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 41i,6n,42p,807b,335s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/share/texmf/fonts/enc/dvips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dv
-ips/lm/lm-ts1.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/shar
-e/texmf/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/l
-m-mathex.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}</usr/share/texmf/f
-onts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.
-pfb></usr/share/texmf/fonts/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/
-type1/public/lm/lmmi7.pfb></usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></u
-sr/share/texmf/fonts/type1/public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/pu
-blic/lm/lmr17.pfb></usr/share/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/
-texmf/fonts/type1/public/lm/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/
-lmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/m
-sam7.pfb>
-Output written on write_up.pdf (10 pages, 824366 bytes).
+ 41i,6n,42p,807b,443s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/share/texmf/fonts/enc/dvips/lm/lm-ec.enc}{/usr/share/texmf/fonts/enc/dv
+ips/lm/lm-rm.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/share/te
+xmf/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-ma
+thsy.enc}{/usr/share/texmf/fonts/enc/dvips/lm/lm-mathex.enc}</usr/share/texmf/f
+onts/type1/public/lm/lmbx12.pfb></usr/share/texmf/fonts/type1/public/lm/lmbxi10
+.pfb></usr/share/texmf/fonts/type1/public/lm/lmex10.pfb></usr/share/texmf/fonts
+/type1/public/lm/lmmi10.pfb></usr/share/texmf/fonts/type1/public/lm/lmmi7.pfb><
+/usr/share/texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/
+public/lm/lmr12.pfb></usr/share/texmf/fonts/type1/public/lm/lmr17.pfb></usr/sha
+re/texmf/fonts/type1/public/lm/lmr7.pfb></usr/share/texmf/fonts/type1/public/lm
+/lmri10.pfb></usr/share/texmf/fonts/type1/public/lm/lmsy10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam7.pfb>
+Output written on write_up.pdf (17 pages, 3499037 bytes).
 PDF statistics:
- 248 PDF objects out of 1000 (max. 8388607)
- 197 compressed objects within 2 object streams
- 44 named destinations out of 1000 (max. 500000)
- 12381 words of extra memory for PDF output out of 14400 (max. 10000000)
+ 433 PDF objects out of 1000 (max. 8388607)
+ 312 compressed objects within 4 object streams
+ 71 named destinations out of 1000 (max. 500000)
+ 12458 words of extra memory for PDF output out of 14400 (max. 10000000)
 

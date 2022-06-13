@@ -360,8 +360,8 @@ geostat.fit.HK <- binomial.logistic.MCML(formula = HK_positive ~
                                          par0 = par0.HK,
                                          control.mcmc = mcml,
                                          kappa = 0.5,
-                                         start.cov.pars = c(HK.phi.guess,
-                                                            HK.tau2.guess/HK.sigma2.guess),
+                                         start.cov.pars = c(par0.HK[6],
+                                                            par0.HK[7]/par0.HK[5]),
                                          method = "nlminb")
 
 ```
@@ -507,8 +507,8 @@ geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
                                           par0 = par0.Asc,
                                           control.mcmc = mcml,
                                           kappa = 0.5,
-                                          start.cov.pars = c(Asc.phi.guess,
-                                                             Asc.tau2.guess/Asc.sigma2.guess),
+                                          start.cov.pars = c(par0.Asc[6],
+                                                            par0.Asc[7]/par0.Asc[5]),
                                           method = "nlminb")
 
 ```
@@ -635,51 +635,188 @@ ggplot(TT.variog.df, aes(x = u))+
 
 ```{r TT.geostat.model, include=FALSE}
 
-par0.TT <- c(-3.3840984086, 0.0005154041, -0.0002321412, -0.0028610129,
-             1.5536212160, 173.6501762833, 0.9918892349)
+par0.TT <- c(-4.1002753787, -0.0001941095, 0.0568812496, -0.0016306050,
+             1.7642179305, 77.2714428406, 0.6446155758)
 
 
-geostat.fit.Asc <- binomial.logistic.MCML(formula = Asc_positive ~
-                                            altitude + riv_dist + travel_w,
-                                          units.m = ~Asc_examined,
-                                          coords = ~I(utm_x/1000)+I(utm_y/1000),
-                                          data = sth,
-                                          par0 = par0.Asc,
-                                          control.mcmc = mcml,
-                                          kappa = 0.5,
-                                          start.cov.pars = c(Asc.phi.guess,
-                                                             Asc.tau2.guess/Asc.sigma2.guess),
-                                          method = "nlminb")
+geostat.fit.TT <- binomial.logistic.MCML(formula = TT_positive ~
+                                           altitude + riv_dist + travel_w,
+                                         units.m = ~TT_examined,
+                                         coords = ~I(utm_x/1000)+
+                                           I(utm_y/1000), # change to km 
+                                         data = sth,
+                                         par0 = par0.TT,
+                                         control.mcmc = mcml,
+                                         kappa = 0.5,
+                                         start.cov.pars = c(par0.TT[6],
+                                                            par0.TT[7]/par0.TT[5]),
+                                         method = "nlminb")
 
 ```
 
 I ran the parameter guesses six times until I reached a final model. The parameters are described in Table 5. I predicted the prevalence and the probability rasters for Trichuris trichuria using this model (Figure 11).
 
+```{r TT.geostat.params, results='markup'}
+
+TT.geostat.params.df <- as.data.frame(summary(geostat.fit.TT,
+                                           log.cov.pars=FALSE)$cov.pars)
+
+rownames(TT.geostat.params.df) <- c("$\\sigma^2$",
+                                 "$\\phi$",
+                                 "$\\tau^2$")
+
+knitr::kable(TT.geostat.params.df, "pipe", digits = 3,
+             caption = "Estimated parameters from binomial geostatistical model - Trichuris trichuria")
 
 
-[FIGURE]
+```
 
-These maps show that, overall, there is very low prevalence of Trichuris trichuria across Ethiopia. The only exception is a small area in the eastern region of Ethiopia, where prevalence appears to be extremely high. 
+```{r TT.prediction.rasters, fig.cap="Rasters for Trichuris trichuria estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
 
-Any STH species 
+ETH_grid$TT.prev.mean <- ETH_grid$TT.prev.mean*100
 
-As described in the methods section, I combined the estimated prevalences of the three STH species to create an estimated prevalence of any STH species. I used this estimate to create 3 rasters: one showing the estimated prevalence, one showing the probability of having between 20% and 50% prevalence and a third showing the probability of exceeding 50% prevalence [FIGURE REF]. 
+TT.1 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=TT.prev.mean))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "batlow", limits = c(0, 100),
+                   name = "Prevalence")+
+  theme_void()
 
-[FIGURE]
+TT.2 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=TT.between.20_50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+TT.3 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=TT.exceed50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+plot_grid(TT.1, TT.2, TT.3, 
+          labels = "AUTO", align = "hv",
+          nrow = 1)
+
+```
+
+These maps show that, overall, there is very low prevalence of *Trichuris trichuria* across Ethiopia. The only exception is a small area in the eastern region of Ethiopia, where prevalence appears to be extremely high. 
+
+## Any STH species 
+
+As described in the methods section, I combined the estimated prevalences of the three STH species to create an estimated prevalence of any STH species.
+I used this estimate to create 3 rasters: one showing the estimated prevalence, one showing the probability of having between 20% and 50% prevalence and a third showing the probability of exceeding 50% prevalence (Figure 12). 
+
+```{r any.sth.prediction.rasters, fig.cap="Rasters for any STH species' estimates. A: Predicted prevalence. B: Probability of having prevalence between 20% and 50%. C: Probability of exceeding 50% prevalence."}
+
+ETH_grid$any.sth.prev.mean <- ETH_grid$any.sth.prev.mean*100
+
+any.sth.1 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.prev.mean))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "batlow", limits = c(0, 100),
+                   name = "Prevalence")+
+  theme_void()
+
+any.sth.2 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.between.20_50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+any.sth.3 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.exceed50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+plot_grid(any.sth.1, any.sth.2, any.sth.3, 
+          labels = "AUTO", align = "hv",
+          nrow = 1)
+
+```
 
 These maps show that, as described above, there is an area in the eastern region of Ethiopia that does have high prevalence for any STH species.
 
-I combined these estimates to create a discrete raster, identifying what strategy should be used in which area. I created these with three levels of confidence [FIGURE REF].
+I combined these estimates to create a discrete raster, identifying what strategy should be used in which area. I created these with three levels of confidence (Figure 13).
 
-[FIGURE]
+```{r discrete.rasters, fig.cap="STH control strategies to use for each area, by confidence level. A: 90% confidence, B: 75% confidence C: 60% confidence."}
 
- These maps show that, depending on the level of confidence, different areas would require different interventions. 
+ETH_grid$discrete.90 <- factor(ETH_grid$discrete.90,
+                               levels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
 
-Conclusion 
+ETH_grid$discrete.75 <- factor(ETH_grid$discrete.75,
+                               levels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
 
-In this report, I used geostatistical methods to produce an estimate of STH prevalence across Ethiopia. I used this estimate to create maps identifying which areas required which control strategy, depending on the level of confidence needed. 
+ETH_grid$discrete.60 <- factor(ETH_grid$discrete.60, 
+                               levels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
 
-These maps showed that, overall, more data would be better to create a more informative estimate. However, given that getting more and better quality data consumes resources, other avenues can be explored. By considering the temporal change of both the STH data and the covariates, I could have created a better estimate of the prevalence. 
+
+d1 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.90))+
+  geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey90"),
+                    drop = FALSE, name = NULL)+
+  theme_void()
+
+d2 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.75))+
+  geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey90"),
+                    drop = FALSE, name = NULL)+
+  theme_void()
+
+d3 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.60))+
+  geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey90"),
+                    drop = FALSE, name = NULL)+
+  theme_void()
+
+drow <- plot_grid(d1+theme(legend.position = "none"),
+          d2+theme(legend.position = "none"),
+          d3+theme(legend.position = "none"),
+          labels = "AUTO", nrow = 1, align = "hv")
+
+legend_d <- get_legend(d3+theme(legend.position = "bottom"))
+
+plot_grid(drow, legend_d,
+          ncol = 1, rel_heights = c(1,0.1))
+
+```
+
+
+These maps show that, depending on the level of confidence, different areas would require different interventions. 
+
+# Conclusion 
+
+In this report, I used geostatistical methods to produce an estimate of STH prevalence across Ethiopia.
+I used this estimate to create maps identifying which areas required which control strategy, depending on the level of confidence needed. 
+
+These maps showed that, overall, more data would be better to create a more informative estimate.
+However, given that getting more and better quality data consumes resources, other avenues can be explored. By considering the temporal change of both the STH data and the covariates, I could have created a better estimate of the prevalence. 
 
 \newpage
 

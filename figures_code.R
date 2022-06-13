@@ -123,3 +123,89 @@ for (i in 1:length(species)) {
 }
 
 plot.list$HK
+
+ETH_grid$HK.prev.mean <- ETH_grid$HK.prev.mean*100
+
+HK.1 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.prev.mean))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "batlow", limits = c(0, 100),
+                   name = "Prevalence")+
+  theme_void()
+
+HK.2 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.between.20_50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+HK.3 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.exceed50))+
+  geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_scico(palette = "vik", limits = c(0, 1),
+                   name = "Probability")+
+  theme_void()
+
+plot_grid(HK.1, HK.2, HK.3, 
+          labels = "AUTO", align = "hv",
+          nrow = 1)
+
+#################################################
+
+
+ETH_grid$discrete.90 <- factor(ETH_grid$discrete.90,
+                               levels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
+
+ETH_grid$discrete.75 <- factor(ETH_grid$discrete.75,
+                               levels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
+
+ETH_grid$discrete.60 <- factor(ETH_grid$discrete.60, 
+                               levels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"), 
+                               labels = c("Once a year", "Twice a year",
+                                          "Case-by-case", "More data needed"))
+
+
+d1 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.90))+
+  geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey90"),
+                    drop = FALSE, name = NULL)+
+  theme_void()
+
+d2 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.75))+
+  geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey90"),
+                    drop = FALSE, name = NULL)+
+  theme_void()
+
+d3 <- ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=discrete.60))+
+  geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  scale_fill_manual(values = c("red", "orange", "green", "grey90"),
+                    drop = FALSE, name = NULL)+
+  theme_void()
+
+drow <- plot_grid(d1+theme(legend.position = "none"),
+          d2+theme(legend.position = "none"),
+          d3+theme(legend.position = "none"),
+          labels = "AUTO", nrow = 1, align = "hv")
+
+legend_d <- get_legend(d3+theme(legend.position = "bottom"))
+
+plot_grid(drow, legend_d,
+          ncol = 1, rel_heights = c(1,0.1))

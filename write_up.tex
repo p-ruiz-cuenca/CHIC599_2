@@ -346,7 +346,15 @@ I performed a logit transformation on the hookworm data to determine the
 association with each of the covariates (Figure 3).
 
 \begin{figure}
-\includegraphics[width=1\linewidth,height=0.5\textheight]{write_up_files/figure-latex/HK_e.logit-1} \caption{Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}\label{fig:HK_e.logit}
+\centering
+\includegraphics{write_up_files/figure-latex/HK_e.logit-1.pdf}
+\caption{Covariates against empirical logit transformation of hookworm
+data. A: Altitude, in meters. B: Distance to nearest river, in
+kilometers. C: Friction surface walking only, in minutes required to
+travel one meter. D: Friction surface motorized vehicle, same units as
+C. E: Walking only travel time to nearest healthcare centre, in minutes.
+F: Motorized vehicle travel time to nearest healthcare centre, in
+minutes.}
 \end{figure}
 
 Focusing on altitude, most of the data points are located in the middle
@@ -381,13 +389,37 @@ linear mixed-effects model.}
 I followed by building a binomial geostatistical model, as described in
 the methods section. I performed four rounds of using guesses for the
 model parameters before arriving to a final model. The final parameters
-are described in Table XXX. Using this model, I created three rasters:
-one showing the predicted prevalence of hookworms across Ethiopia, one
-showing the probability of having between 20\% and 50\% prevalence and
-the final one showing the probability of exceeding 50\% prevalence {[}
-FIGURE REF{]}.
+are described in Table 2.
 
-{[}Figure{]}
+\begin{longtable}[]{@{}lrr@{}}
+\caption{Estimated parameters from binomial geostatistical model -
+Hookworms}\tabularnewline
+\toprule
+& Estimate & StdErr \\
+\midrule
+\endfirsthead
+\toprule
+& Estimate & StdErr \\
+\midrule
+\endhead
+\(\sigma^2\) & 3.110 & 0.091 \\
+\(\phi\) & 76.197 & 0.006 \\
+\(\tau^2\) & 1.129 & 0.454 \\
+\bottomrule
+\end{longtable}
+
+Using this model, I created three rasters: one showing the predicted
+prevalence of hookworms across Ethiopia, one showing the probability of
+having between 20\% and 50\% prevalence and the final one showing the
+probability of exceeding 50\% prevalence (Figure 5).
+
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/HK.prediction.rasters-1.pdf}
+\caption{Rasters for Hookworm estimates. A: Predicted prevalence. B:
+Probability of having prevalence between 20\% and 50\%. C: Probability
+of exceeding 50\% prevalence.}
+\end{figure}
 
 The predicted prevalence shows a pocket of high prevalence of hookworm
 in the eastern region of Ethiopia. This area does overlap with a high
@@ -395,12 +427,24 @@ probability of exceeding 50\% prevalence. However, there is low
 probability of having between 20\% and 50\% prevalence across the entire
 country.
 
-Ascaris lumbricoides
+\hypertarget{ascaris-lumbricoides}{%
+\subsection{\texorpdfstring{\emph{Ascaris
+lumbricoides}}{Ascaris lumbricoides}}\label{ascaris-lumbricoides}}
 
 The associations between each covariate and the logit transformation for
-the Ascaris lumbricoides data is plotted in {[}FIGURE REF{]}.
+the Ascaris lumbricoides data is plotted in Figure 6.
 
-{[}FIGURE{]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/Asc_e.logit-1.pdf}
+\caption{Covariates against empirical logit transformation of Ascaris
+lumbricoides data. A: Altitude, in meters. B: Distance to nearest river,
+in kilometers. C: Friction surface walking only, in minutes required to
+travel one meter. D: Friction surface motorized vehicle, same units as
+C. E: Walking only travel time to nearest healthcare centre, in minutes.
+F: Motorized vehicle travel time to nearest healthcare centre, in
+minutes.}
+\end{figure}
 
 All the associations are very similar to those seen for the hookworm
 logit transformation. Both altitude and distance to nearest river show
@@ -412,67 +456,144 @@ hookworm: altitude, distance to nearest river and walking travel time to
 closest healthcare centre.
 
 The binomial generalised linear mixed-effects model showed evidence of
-overdispersion, as the variance of the random effects was {[}INSERT
-VALUE{]}. The variogram for this model also showed the presence of
-residual spatial correlation {[} FIGURE REF{]}.
+overdispersion, as the variance of the random effects was 2.087. The
+variogram for this model also showed the presence of residual spatial
+correlation (Figure 7).
 
-{[} FIGURE variogram {]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/Asc.variogram_2-1.pdf}
+\caption{Variogram of Ascaris lumbricoides data. Plot shows evidence of
+residual spatial correlation that remains unaccounted for by the
+generalised linear mixed-effects model.}
+\end{figure}
 
 I performed four rounds of parameter guessing before reaching a final
-binomial geostatistical model. These are described in {[}TABLE REF{]}. I
-used this model to create the same three rasters as I did for hookworms:
-predicted prevalence, probability of having between 20\% and 50\%
-prevalence and probability of exceeding 50\% prevalence {[}Figure
-REF{]}.
+binomial geostatistical model. These are described in Table 3.
 
-{[}Figure{]}
+\begin{longtable}[]{@{}lrr@{}}
+\caption{Estimated parameters from binomial geostatistical model -
+Ascaris lumbricoides}\tabularnewline
+\toprule
+& Estimate & StdErr \\
+\midrule
+\endfirsthead
+\toprule
+& Estimate & StdErr \\
+\midrule
+\endhead
+\(\sigma^2\) & 1.557 & 0.273 \\
+\(\phi\) & 173.882 & 0.003 \\
+\(\tau^2\) & 0.979 & 0.759 \\
+\bottomrule
+\end{longtable}
+
+I used this model to create the same three rasters as I did for
+hookworms: predicted prevalence, probability of having between 20\% and
+50\% prevalence and probability of exceeding 50\% prevalence (Figure 8).
+
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/Asc.prediction.rasters-1.pdf}
+\caption{Rasters for Ascaris lumbricoides estimates. A: Predicted
+prevalence. B: Probability of having prevalence between 20\% and 50\%.
+C: Probability of exceeding 50\% prevalence.}
+\end{figure}
 
 These maps show that the prevalence for Ascaris lumbricoides across
 Ethiopia is very low.
 
-Trichuris trichuria
+\hypertarget{trichuris-trichuria}{%
+\subsection{\texorpdfstring{\emph{Trichuris
+trichuria}}{Trichuris trichuria}}\label{trichuris-trichuria}}
 
 I plotted the logit transformed Trichuris trichuria data against each of
-the covariates {[}FIGURE ref{]}.
+the covariates (Figure 9).
 
-{[} FIGURE {]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/TT_e.logit-1.pdf}
+\caption{Covariates against empirical logit transformation of Trichuris
+trichuria data. A: Altitude, in meters. B: Distance to nearest river, in
+kilometers. C: Friction surface walking only, in minutes required to
+travel one meter. D: Friction surface motorized vehicle, same units as
+C. E: Walking only travel time to nearest healthcare centre, in minutes.
+F: Motorized vehicle travel time to nearest healthcare centre, in
+minutes.}
+\end{figure}
 
 The only notable difference of the Trichuris trichuria logit data is
 that when plotting it against the distance to river it seems to be more
-spread out than the data points for hookworms and Ascaris lumbricoides.
-All other associations are very similar. Therefore, I used the same
-covariates as I did in models for hookworms and for Ascaris
-lumbricoides.
+spread out than the data points for hookworms and \emph{Ascaris
+lumbricoides}. All other associations are very similar. Therefore, I
+used the same covariates as I did in models for hookworms and for
+\emph{Ascaris lumbricoides}.
 
 The binomial generalised linear mixed-effects model also showed evidence
-of overdispersion for Trichuris trichuria, as the variance of the random
-effects was {[}INSERT VALUE{]}. The variogram showed evidence of
-residual spatial correlation. {[} FIGURE {]}
+of overdispersion for \emph{Trichuris trichuria}, as the variance of the
+random effects was 2.269. The variogram showed evidence of residual
+spatial correlation (figure 10).
 
-{[}FIGURE variogram {]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/TT.variogram_2-1.pdf}
+\caption{Variogram of Ascaris lumbricoides data. Plot shows evidence of
+residual spatial correlation that remains unaccounted for by the
+generalised linear mixed-effects model.}
+\end{figure}
 
 I ran the parameter guesses six times until I reached a final model. The
-parameters are described in {[}TABLE REF{]}. I predicted the prevalence
-and the probability rasters for Trichuris trichuria using this model
-{[}FIGURE REF{]}.
+parameters are described in Table 5. I predicted the prevalence and the
+probability rasters for Trichuris trichuria using this model (Figure
+11).
 
-{[}FIGURE{]}
+\begin{longtable}[]{@{}lrr@{}}
+\caption{Estimated parameters from binomial geostatistical model -
+Trichuris trichuria}\tabularnewline
+\toprule
+& Estimate & StdErr \\
+\midrule
+\endfirsthead
+\toprule
+& Estimate & StdErr \\
+\midrule
+\endhead
+\(\sigma^2\) & 1.759 & 0.169 \\
+\(\phi\) & 74.864 & 0.006 \\
+\(\tau^2\) & 0.649 & 0.832 \\
+\bottomrule
+\end{longtable}
 
-These maps show that, overall, there is very low prevalence of Trichuris
-trichuria across Ethiopia. The only exception is a small area in the
-eastern region of Ethiopia, where prevalence appears to be extremely
-high.
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/TT.prediction.rasters-1.pdf}
+\caption{Rasters for Trichuris trichuria estimates. A: Predicted
+prevalence. B: Probability of having prevalence between 20\% and 50\%.
+C: Probability of exceeding 50\% prevalence.}
+\end{figure}
 
-Any STH species
+These maps show that, overall, there is very low prevalence of
+\emph{Trichuris trichuria} across Ethiopia. The only exception is a
+small area in the eastern region of Ethiopia, where prevalence appears
+to be extremely high.
+
+\hypertarget{any-sth-species}{%
+\subsection{Any STH species}\label{any-sth-species}}
 
 As described in the methods section, I combined the estimated
 prevalences of the three STH species to create an estimated prevalence
 of any STH species. I used this estimate to create 3 rasters: one
 showing the estimated prevalence, one showing the probability of having
 between 20\% and 50\% prevalence and a third showing the probability of
-exceeding 50\% prevalence {[}FIGURE REF{]}.
+exceeding 50\% prevalence (Figure 12).
 
-{[}FIGURE{]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/any.sth.prediction.rasters-1.pdf}
+\caption{Rasters for any STH species' estimates. A: Predicted
+prevalence. B: Probability of having prevalence between 20\% and 50\%.
+C: Probability of exceeding 50\% prevalence.}
+\end{figure}
 
 These maps show that, as described above, there is an area in the
 eastern region of Ethiopia that does have high prevalence for any STH
@@ -480,14 +601,20 @@ species.
 
 I combined these estimates to create a discrete raster, identifying what
 strategy should be used in which area. I created these with three levels
-of confidence {[}FIGURE REF{]}.
+of confidence (Figure 13).
 
-{[}FIGURE{]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/discrete.rasters-1.pdf}
+\caption{STH control strategies to use for each area, by confidence
+level. A: 90\% confidence, B: 75\% confidence C: 60\% confidence.}
+\end{figure}
 
 These maps show that, depending on the level of confidence, different
 areas would require different interventions.
 
-Conclusion
+\hypertarget{conclusion}{%
+\section{Conclusion}\label{conclusion}}
 
 In this report, I used geostatistical methods to produce an estimate of
 STH prevalence across Ethiopia. I used this estimate to create maps
