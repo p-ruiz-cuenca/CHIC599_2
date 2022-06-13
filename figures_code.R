@@ -94,6 +94,7 @@ ggplot()+
 sth %>% 
   count(Year)
 
+############################################
 
 sth$HK_e.logit <- log((sth$HK_positive+0.5)/(sth$HK_examined-sth$HK_positive+0.5))
 sth$Asc_e.logit <- log((sth$Asc_positive+0.5)/(sth$Asc_examined-sth$Asc_positive+0.5))
@@ -116,13 +117,23 @@ for (i in 1:length(species)) {
       ggplot(sth, aes_string(x = vars[j],
                              y = paste0(species[i], "_e.logit")))+
       geom_point()+
-      labs(x = vars_labels[j], y = "Empirical logit")
+      labs(x = vars_labels[j], y = "logit")+
+      theme(axis.text = element_text(size = 5),
+            axis.title = element_text(size = 8))
     
   }
   
 }
 
-plot.list$HK
+
+plot_grid(plot.list$HK$altitude, plot.list$HK$riv_dist,
+          plot.list$HK$fric_w,plot.list$HK$fric_m,
+          plot.list$HK$travel_w, plot.list$HK$travel_m,
+          labels = "AUTO",
+          align = "hv",
+          nrow = 3, ncol = 2)
+
+##########################################################
 
 ETH_grid$HK.prev.mean <- ETH_grid$HK.prev.mean*100
 
