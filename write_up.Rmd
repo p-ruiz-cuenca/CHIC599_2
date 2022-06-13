@@ -3,7 +3,7 @@ title: "CHIC599 Project 2"
 author: '36075596'
 date: "`r Sys.Date()`"
 output: 
-pdf_document:
+  pdf_document:
     keep_tex: true
 bibliography: references.bib
 csl: "malaria-journal.csl"
