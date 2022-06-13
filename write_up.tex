@@ -346,15 +346,7 @@ I performed a logit transformation on the hookworm data to determine the
 association with each of the covariates (Figure 3).
 
 \begin{figure}
-\centering
-\includegraphics{write_up_files/figure-latex/HK_e.logit-1.pdf}
-\caption{Covariates against empirical logit transformation of hookworm
-data. A: Altitude, in meters. B: Distance to nearest river, in
-kilometers. C: Friction surface walking only, in minutes required to
-travel one meter. D: Friction surface motorized vehicle, same units as
-C. E: Walking only travel time to nearest healthcare centre, in minutes.
-F: Motorized vehicle travel time to nearest healthcare centre, in
-minutes.}
+\includegraphics[width=1\linewidth,height=0.5\textheight]{write_up_files/figure-latex/HK_e.logit-1} \caption{Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.}\label{fig:HK_e.logit}
 \end{figure}
 
 Focusing on altitude, most of the data points are located in the middle
@@ -374,11 +366,17 @@ risks of introducing multi-collinearity.
 
 I used these variables, without performing any transformations on them,
 to build a binomial generalised linear mixed-effects model, as defined
-in the methods section. The variance of the random effects was {[}INSERT
-VALUE{]}, showing evidence of overdispersion. The variogram for this
-model also showed residual spatial correlation {[}FIGURE REF{]}.
+in the methods section. The variance of the random effects was 3.59,
+showing evidence of overdispersion. The variogram for this model also
+showed residual spatial correlation (Figure 4).
 
-{[}FIGURE Variogram{]}
+\begin{figure}
+\centering
+\includegraphics{write_up_files/figure-latex/HK.variogram_2-1.pdf}
+\caption{Variogram of Hookworm data. Plot shows evidence of residual
+spatial correlation that remains unaccounted for by the generalised
+linear mixed-effects model.}
+\end{figure}
 
 I followed by building a binomial geostatistical model, as described in
 the methods section. I performed four rounds of using guesses for the
@@ -501,6 +499,12 @@ more informative estimate. However, given that getting more and better
 quality data consumes resources, other avenues can be explored. By
 considering the temporal change of both the STH data and the covariates,
 I could have created a better estimate of the prevalence.
+
+\newpage
+
+\hypertarget{references}{%
+\section*{References}\label{references}}
+\addcontentsline{toc}{section}{References}
 
 \hypertarget{refs}{}
 \begin{CSLReferences}{0}{0}

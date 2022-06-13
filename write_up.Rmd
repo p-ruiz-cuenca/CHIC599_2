@@ -76,67 +76,64 @@ I also downloaded a shapefile of all the rivers in Ethiopia which I used to crea
 
 r1 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = altitude))+
-  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
   scale_fill_scico(palette = "bamako", name = "Altitude (m)")+
   theme_void()+
-  theme(legend.text = element_text(size = 5),
-        legend.title = element_text(size = 7))
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 14))
 
 r2 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = riv_dist))+
-  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
   scale_fill_scico(palette = "davos", name = "Distance (km)")+
   theme_void()+
-  theme(legend.text = element_text(size = 5),
-        legend.title = element_text(size = 7))
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 14))
 
 r3 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = fric_w))+
-  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
   scale_fill_scico(palette = "acton", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 5),
-        legend.title = element_text(size = 7))
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 14))
 
 r4 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = fric_m))+
-  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
   scale_fill_scico(palette = "acton", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 5),
-        legend.title = element_text(size = 7))
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 14))
 
 r5 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = travel_w))+
-  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
   scale_fill_scico(palette = "oslo", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 5),
-        legend.title = element_text(size = 7))
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 14))
 
 r6 <- ggplot()+
   geom_raster(data = ETH_grid, aes(x=X, y=Y, fill = travel_m))+
-  geom_sf(data = ETH_adm1, col = "grey80", fill = NA, size = 0.15)+
   geom_sf(data = ETH_adm0, col = "black", fill = NA)+
   geom_sf(data = sth_sf, col = "white", size = 0.15)+
   scale_fill_scico(palette = "oslo", name = "Time (min)")+
   theme_void()+
-  theme(legend.text = element_text(size = 5),
-        legend.title = element_text(size = 7))
+  theme(legend.text = element_text(size = 10),
+        legend.title = element_text(size = 14))
 
-plot_grid(r1, r3, r5, r2, r4, r6,
-          labels = c("A", "C", "E", "B", "D", "F"),
-          align = "hv")
+plot_grid(r1, r2, r3, r4, r5, r6,
+          labels = "AUTO",
+          label_size = 20,
+          align = "hv",
+          nrow = 3,
+          ncol = 2)
 
 ```
 
@@ -212,7 +209,7 @@ I also created a fourth category to indicate areas where confidence was too low 
 
 There were a total of 146 unique data collection locations across Ethiopia (Figure 2). The data collection occurred across a number of years, at varying rates, as described in Table 1. Due to lack of multiple rasters representing the change in time, this temporal change was not accounted for in any further analyses. 
 
-```{r STH_locations, fig.cap= "STH data collection locations.", fig.height=10}
+```{r STH_locations, fig.cap= "STH data collection locations.", fig.height=10, fig.width=5}
 
 ggplot()+
   geom_sf(data = ETH_adm1, col = "grey60", fill = NA, size = 0.15)+
@@ -268,23 +265,80 @@ for (i in 1:length(species)) {
 
 ```
 
-```{r HK_e.logit, fig.cap="Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", fig.height=13, fig.width=20}
+```{r HK_e.logit, fig.cap="Covariates against empirical logit transformation of hookworm data. A: Altitude, in meters. B: Distance to nearest river, in kilometers. C: Friction surface walking only, in minutes required to travel one meter. D: Friction surface motorized vehicle, same units as C. E: Walking only travel time to nearest healthcare centre, in minutes. F: Motorized vehicle travel time to nearest healthcare centre, in minutes.", out.height='50%', out.width='100%'}
 
-plot_grid(plot.list$HK$altitude, plot.list$HK$fric_w,plot.list$HK$travel_w,
-          plot.list$HK$riv_dist,plot.list$HK$fric_m, plot.list$HK$travel_m,
-          labels = c("A", "C", "E", "B", "D", "F"),
-          align = "hv")
+plot_grid(plot.list$HK$altitude, plot.list$HK$riv_dist,
+          plot.list$HK$fric_w,plot.list$HK$fric_m,
+          plot.list$HK$travel_w, plot.list$HK$travel_m,
+          labels = "AUTO",
+          align = "hv",
+          nrow = 3, ncol = 2)
 
 ```
 
  
-Focusing on altitude, most of the data points are located in the middle of the range, with a few points on either side. There does appear to be a linear relationship present, with the empirical logit increasing as altitude increases. With distance to river, there is a high density of points located in the lower end of the range. The friction variables and the travel variables show very similar relationships. Most of the data points are located on the lower end of the scales. The walking travel time to nearest healthcare centre has the lowest density, with the points more spread out across the range. 
+Focusing on altitude, most of the data points are located in the middle of the range, with a few points on either side.
+There does appear to be a linear relationship present, with the empirical logit increasing as altitude increases.
+With distance to river, there is a high density of points located in the lower end of the range. 
+The friction variables and the travel variables show very similar relationships.
+Most of the data points are located on the lower end of the scales. 
+The walking travel time to nearest healthcare centre has the lowest density, with the points more spread out across the range. 
 
-Informed by these plots, I decided to include altitude, distance to river and walking travel time to nearest health care centre in further models. I only included one of the friction and travel variables due to risks of introducing multi-collinearity. 
+Informed by these plots, I decided to include altitude, distance to river and walking travel time to nearest health care centre in further models. 
+I only included one of the friction and travel variables due to risks of introducing multi-collinearity. 
 
-I used these variables, without performing any transformations on them, to build a binomial generalised linear mixed-effects model, as defined in the methods section. The variance of the random effects was [INSERT VALUE], showing evidence of overdispersion. The variogram for this model also showed residual spatial correlation [FIGURE REF]. 
+```{r HK_glmer}
 
-[FIGURE Variogram]
+sth <- sth[complete.cases(sth),]
+sth$ID.location <- create.ID.coords(sth, coords = ~utm_x+utm_y)
+
+glmer.fit.HK <- glmer(cbind(HK_positive, HK_examined-HK_positive) ~ 
+                        altitude + riv_dist + 
+                        travel_w +
+                        (1|ID.location),
+                      data = sth,
+                      family = binomial)
+
+HK.glmer.sigma2 <- as.data.frame(summary(glmer.fit.HK)$varcor)[1,4]
+
+```
+
+
+I used these variables, without performing any transformations on them, to build a binomial generalised linear mixed-effects model, as defined in the methods section.
+The variance of the random effects was `r round(HK.glmer.sigma2, digits = 3)`, showing evidence of overdispersion.
+The variogram for this model also showed residual spatial correlation (Figure 4). 
+
+
+```{r HK.variogram_1, include = FALSE}
+variog.HK <- spat.corr.diagnostic(formula = HK_positive ~ 
+                       altitude + riv_dist + travel_w, 
+                     units.m = ~HK_examined,
+                     coords = ~I(utm_x/1000)+I(utm_y/1000), # change to km 
+                     data = sth, 
+                     likelihood = "Binomial",
+                     uvec = seq(0, 600, length = 15), 
+                     n.sim = 10000,
+                     which.test = "variogram")
+
+
+```
+
+```{r HK.variogram_2, fig.cap="Variogram of Hookworm data. Plot shows evidence of residual spatial correlation that remains unaccounted for by the generalised linear mixed-effects model."}
+
+HK.variog.df <- data.frame(
+  u = as.numeric(variog.HK$distance.bins),
+  v = as.numeric(variog.HK$obs.variogram),
+  v.upper = variog.HK$upper.lim,
+  v.lower = variog.HK$lower.lim)
+
+ggplot(HK.variog.df, aes(x = u))+
+  geom_ribbon(aes(ymin = v.lower, ymax = v.upper), fill = "skyblue1", alpha = 0.75)+
+  geom_line(aes(y = v))+
+  labs(x = "Spatial distance (km)", y = "Variogram")+
+  theme_light()
+
+```
+
 
 I followed by building a binomial geostatistical model, as described in the methods section. I performed four rounds of using guesses for the model parameters before arriving to a final model. The final parameters are described in Table XXX. Using this model, I created three rasters: one showing the predicted prevalence of hookworms across Ethiopia, one showing the probability of having between 20% and 50% prevalence and the final one showing the probability of exceeding 50% prevalence [ FIGURE REF]. 
 
@@ -349,3 +403,6 @@ In this report, I used geostatistical methods to produce an estimate of STH prev
 
 These maps showed that, overall, more data would be better to create a more informative estimate. However, given that getting more and better quality data consumes resources, other avenues can be explored. By considering the temporal change of both the STH data and the covariates, I could have created a better estimate of the prevalence. 
 
+\newpage
+
+# References 
