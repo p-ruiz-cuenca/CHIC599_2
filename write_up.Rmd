@@ -158,12 +158,12 @@ $$ \text{logit} = \log\left(\frac{y+0.5}{n-y+0.5}\right) $$
 Once I had determined the relationship between the covariates and each of the STH species logit transformation, I proceeded to build binomial generalised linear mixed-effects models.
 I created one model for each species, as defined by the equation below.
 
-$$ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + Z_i $$
+$$ \log\left(\frac{p(x_i)}{1-p(x_i)}\right) = d(x_i)^\intercal\beta + Z_i $$
 
 Where:
 
-- $x_i^\intercal\beta$ holds the intercept and any covariates included in the model. I selected the covariates by assessing associations with the logit transformation
-- $Z_i$ represents the random effects for each location $i$, assumed to be normally distributed and independant, identical distributions, such that 
+- $d(x_i)^\intercal\beta$ holds the intercept and any covariate effects at location $x_i$ included in the model. I selected the covariates by assessing associations with the logit transformation
+- $Z_i$ represents the random effects for each location $x_i$, assumed to be normally distributed and independant, identical distributions, such that 
 
 $$ Z_i \sim N(0, \sigma^2)  $$
 
@@ -171,17 +171,17 @@ I assessed if there was overdispersion present by extracting the variance of the
 
 I carried on analysing the data by building a binomial geostatistical model. This model is defined by the equation below. 
 
-$$ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + S(x_i) + Z_i $$
+$$ \log\left(\frac{p(x_i)}{1-p(x_i)}\right) = d(x_i)^\intercal\beta + S(x_i) + Z_i $$
 
 Where: 
 
-- $x_i^\intercal\beta$ represents the covariates for each location $i$ and the intercept
-- $S(x)$ denotes the spatial Gaussian process, with assumed stationarity and isotropy
+- $d(x_i)^\intercal\beta$ represents the covariate effects at each location $x_i$ and the intercept
+- $S(x_i)$ denotes the spatial Gaussian process, with assumed stationarity and isotropy and an exponential correlation function
 - $Z_i$ is the nugget effect, a normally distributed random variable representing non-spatial variation, small-scale spatial variation or measurement error
 
 
 As this is a binomial geostatistical model, it requires initial guesses to be given for the unknown parameters.
-The unknown parameters are: $\beta$, the coefficients of the covariates (including the intercept);
+The unknown parameters are: $\beta$, the covariate effects at each location $x_i$ (including the intercept);
 $\sigma^2$, the variance of the spatial Gaussian process;
 $\phi$, the scale of the spatial correlation;
 and $\tau^2$, the variance of the nugget.
@@ -829,7 +829,13 @@ I used this estimate to create maps identifying which areas required which contr
 These maps showed that, overall, more data would be better to create a more informative estimate.
 However, given that getting more and better quality data is not always feasible, considering other options is important.
 My choice of covariates might have been inadequate, given the level of uncertainty in the final plots.
-Including covariates which represented temporal changes, as well as spatial ones, could have produced more accurate and dynamic maps. 
+Including covariates which represented temporal changes, as well as spatial ones, could have produced more accurate and dynamic maps.
+There is also a large area in the eastern region of Ethiopia where no data collection took place. 
+Whilst the predictions for this area should be interpreted with caution, this area represents a good example of the usefulness of geostatistical models.
+By using spatial data that is openly available, I can predict the prevalence in an area which might not be easy to survey. 
+It would be essential to understand the reasoning behind the lack of data, as this could affect how the predictions are interpreted. 
+If there is a specific difference between the people living here and those in areas where data collection took place--for example, different cultural practices resulting in different risks of STH--this could result in invalid predictions. 
+This highlights the necessity of having open dialogue across disciplines. 
 
 This report also shows the importance of working alongside policy makes in making decisions. Changing the confidence level of the final data can have different outcomes. Ultimately, this decision is set by policy makers and should be done in conversation with other professionals, including health economists and anthropologists. 
 

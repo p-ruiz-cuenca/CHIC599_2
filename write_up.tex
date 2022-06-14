@@ -98,7 +98,7 @@
 
 \title{CHIC599 Project 2}
 \author{36075596}
-\date{2022-06-13}
+\date{2022-06-14}
 
 \begin{document}
 \maketitle
@@ -196,20 +196,20 @@ of the STH species logit transformation, I proceeded to build binomial
 generalised linear mixed-effects models. I created one model for each
 species, as defined by the equation below.
 
-\[ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + Z_i \]
+\[ \log\left(\frac{p(x_i)}{1-p(x_i)}\right) = d(x_i)^\intercal\beta + Z_i \]
 
 Where:
 
 \begin{itemize}
 \tightlist
 \item
-  \(x_i^\intercal\beta\) holds the intercept and any covariates included
-  in the model. I selected the covariates by assessing associations with
-  the logit transformation
+  \(d(x_i)^\intercal\beta\) holds the intercept and any covariate
+  effects at location \(x_i\) included in the model. I selected the
+  covariates by assessing associations with the logit transformation
 \item
-  \(Z_i\) represents the random effects for each location \(i\), assumed
-  to be normally distributed and independant, identical distributions,
-  such that
+  \(Z_i\) represents the random effects for each location \(x_i\),
+  assumed to be normally distributed and independant, identical
+  distributions, such that
 \end{itemize}
 
 \[ Z_i \sim N(0, \sigma^2)  \]
@@ -222,18 +222,18 @@ unaccounted for by the generalised linear mixed-effects models.
 I carried on analysing the data by building a binomial geostatistical
 model. This model is defined by the equation below.
 
-\[ \log\left(\frac{p}{1-p}\right) = x_i^\intercal\beta + S(x_i) + Z_i \]
+\[ \log\left(\frac{p(x_i)}{1-p(x_i)}\right) = d(x_i)^\intercal\beta + S(x_i) + Z_i \]
 
 Where:
 
 \begin{itemize}
 \tightlist
 \item
-  \(x_i^\intercal\beta\) represents the covariates for each location
-  \(i\) and the intercept
+  \(d(x_i)^\intercal\beta\) represents the covariate effects at each
+  location \(x_i\) and the intercept
 \item
-  \(S(x)\) denotes the spatial Gaussian process, with assumed
-  stationarity and isotropy
+  \(S(x_i)\) denotes the spatial Gaussian process, with assumed
+  stationarity and isotropy and an exponential correlation function
 \item
   \(Z_i\) is the nugget effect, a normally distributed random variable
   representing non-spatial variation, small-scale spatial variation or
@@ -242,18 +242,19 @@ Where:
 
 As this is a binomial geostatistical model, it requires initial guesses
 to be given for the unknown parameters. The unknown parameters are:
-\(\beta\), the coefficients of the covariates (including the intercept);
-\(\sigma^2\), the variance of the spatial Gaussian process; \(\phi\),
-the scale of the spatial correlation; and \(\tau^2\), the variance of
-the nugget. I used the coefficients of the covariates from a generalized
-linear model, which had the same covariates as those included in the
-binomial geostatistical model, as the initial guesses for \(\beta\). I
-produced the guesses for \(\sigma^2\), \(\phi\) and \(\tau^2\) by using
-the empirical variogram and fitting a weighted least-squares estimate
-line through it, producing a set a values that would create this line. I
-then extracted the values for each of the parameters from the
-geostatistical model and used them as guesses for the same model. I
-repeated this until the values of the parameters stabilised.
+\(\beta\), the covariate effects at each location \(x_i\) (including the
+intercept); \(\sigma^2\), the variance of the spatial Gaussian process;
+\(\phi\), the scale of the spatial correlation; and \(\tau^2\), the
+variance of the nugget. I used the coefficients of the covariates from a
+generalized linear model, which had the same covariates as those
+included in the binomial geostatistical model, as the initial guesses
+for \(\beta\). I produced the guesses for \(\sigma^2\), \(\phi\) and
+\(\tau^2\) by using the empirical variogram and fitting a weighted
+least-squares estimate line through it, producing a set a values that
+would create this line. I then extracted the values for each of the
+parameters from the geostatistical model and used them as guesses for
+the same model. I repeated this until the values of the parameters
+stabilised.
 
 I performed the inference explained above using Markov Chain Monte Carlo
 (MCMC) methods. I ran 10,000 simulations, discarding the first 2,000
@@ -390,9 +391,9 @@ Hookworms}\tabularnewline
 & Estimate & StdErr \\
 \midrule
 \endhead
-\(\sigma^2\) & 3.135 & 0.091 \\
-\(\phi\) & 77.525 & 0.006 \\
-\(\tau^2\) & 1.149 & 0.456 \\
+\(\sigma^2\) & 3.126 & 0.091 \\
+\(\phi\) & 76.982 & 0.006 \\
+\(\tau^2\) & 1.154 & 0.445 \\
 \bottomrule
 \end{longtable}
 
@@ -464,9 +465,9 @@ Ascaris lumbricoides}\tabularnewline
 & Estimate & StdErr \\
 \midrule
 \endhead
-\(\sigma^2\) & 1.561 & 0.273 \\
-\(\phi\) & 174.051 & 0.003 \\
-\(\tau^2\) & 0.991 & 0.761 \\
+\(\sigma^2\) & 1.575 & 0.271 \\
+\(\phi\) & 172.627 & 0.003 \\
+\(\tau^2\) & 0.995 & 0.753 \\
 \bottomrule
 \end{longtable}
 
@@ -534,9 +535,9 @@ Trichuris trichuria}\tabularnewline
 & Estimate & StdErr \\
 \midrule
 \endhead
-\(\sigma^2\) & 1.792 & 0.177 \\
-\(\phi\) & 80.933 & 0.006 \\
-\(\tau^2\) & 0.659 & 0.845 \\
+\(\sigma^2\) & 1.804 & 0.178 \\
+\(\phi\) & 75.202 & 0.006 \\
+\(\tau^2\) & 0.661 & 0.865 \\
 \bottomrule
 \end{longtable}
 
@@ -608,7 +609,19 @@ quality data is not always feasible, considering other options is
 important. My choice of covariates might have been inadequate, given the
 level of uncertainty in the final plots. Including covariates which
 represented temporal changes, as well as spatial ones, could have
-produced more accurate and dynamic maps.
+produced more accurate and dynamic maps. There is also a large area in
+the eastern region of Ethiopia where no data collection took place.
+Whilst the predictions for this area should be interpreted with caution,
+this area represents a good example of the usefulness of geostatistical
+models. By using spatial data that is openly available, I can predict
+the prevalence in an area which might not be easy to survey. It would be
+essential to understand the reasoning behind the lack of data, as this
+could affect how the predictions are interpreted. If there is a specific
+difference between the people living here and those in areas where data
+collection took place--for example, different cultural practices
+resulting in different risks of STH--this could result in invalid
+predictions. This highlights the necessity of having open dialogue
+across disciplines.
 
 This report also shows the importance of working alongside policy makes
 in making decisions. Changing the confidence level of the final data can

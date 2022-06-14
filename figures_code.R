@@ -145,6 +145,16 @@ HK.1 <- ggplot()+
                    name = "Prevalence")+
   theme_void()
 
+ggplot()+
+  geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=any.sth.prev.mean))+
+  #geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
+  geom_sf(data=ETH_adm0, col = "black", fill = NA)+
+  geom_contour(data = ETH_grid, aes(x=X, y=Y, z=TT.prev.mean),
+               col = "white", size = 0.5, breaks = c(0, 0.2, 0.5))+
+  scale_fill_scico(palette = "batlow", limits = c(0, 1),
+                   name = "Prevalence")+
+  theme_void()
+
 HK.2 <- ggplot()+
   geom_raster(data=ETH_grid, aes(x=X, y=Y, fill=HK.between.20_50))+
   geom_sf(data = ETH_adm1, col = "grey", fill = NA, size = 0.2)+
